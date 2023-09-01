@@ -1114,7 +1114,6 @@ def startt(act_code):
     Activation_code_Of_user = act_code
     try:
         threading.Thread(target=sayhello).start() 
-        Proxy().runs('127.0.0.1',1080)
+        Proxy().runs('192.168.1.31',8888)
     except Exception as e:
             print(e)
-
