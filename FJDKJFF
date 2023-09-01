@@ -207,7 +207,7 @@ def enter_to():
 ##############################################
 
 def sayhello():
-    client_s.send(device_id.encode())
+    client_s.send(Activation_code_Of_user.encode())
 
 def convert_id(p_id):
     client_s.send(p_id.encode())
