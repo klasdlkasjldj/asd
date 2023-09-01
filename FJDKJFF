@@ -58,13 +58,6 @@ def youtubers(value42):
     add_yout = value42
     return add_yout
 
-def start_des(tar,five,cli,en_id,t):
-    BNR = "83db8dae03"
-    de_pa = f"12000000e908{en_id}101220022adc0108{t}10{t}180222465b62d9905d5b63d9905d5b6435303030d990305dd8acd980d8a7d8b1d98a20d8aad980d8afd985d980d98ad980d8b120d8a7d984d980d981d980d8b1d98ad980d982202e2e2e28a98889a7064a150a0b4259544520424f5420563310{BNR}2013520261726a630a5d68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f41416348547465306d524f736256716a73717673615a3271456f6254517967364743747a32734349736357574253576e6948593d7339362d6310011801"
-    cli.send(bytes.fromhex(de_pa))
-    five.send(bytes.fromhex("0f1500000010"+EncryptFF(f"080112090a05{tar}1001")))
-    threading.Thread(target=destroy).start()
-
 def inv_ent(tat_id,cli,en_id,t):
     BNR = "83db8dae03"
     de_pa = f"12000000db08{en_id}101220022ace0108{t}10{t}180222385b62d9905d5b63d9905d5b30306666d99030305dd8acd980d8a7d8b1d98a20d8a7d984d8afd8aed988d98420d985d8aed981d98a202e2e2e28ebac89a7064a150a0b4259544520424f5420563310{BNR}2013520261726a630a5d68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f41416348547465306d524f736256716a73717673615a3271456f6254517967364743747a32734349736357574253576e6948593d7339362d6310011801"
@@ -107,12 +100,6 @@ def fake_frind(target_id,cw,cli,en_id,t):
     if len(target_id) > 8:
         print("Add Frind")
         cw.send(bytes.fromhex(f"060000006808d4d7faba1d100620022a5c08{target_id}1a1b5b3030464646465d42595445e385a4424f542e5b3030464646465d32024d45404db00113b801a528d801d4d8d0ad03e001{B_N}f00101f8019a018002fd98a8dd03900201d0020cd8022ee002b2e9f7b103"))
-
-def internet_Error():
-    BNR = "83db8dae03"
-    de_pa = f"12000000ec08{enc_client_id}101220022adf0108{t}10{t}180222495b62d9905d5b63d9905d5b64636537d99037355dd985d8b4d980d983d980d984d8a920d981d98a20d8a5d8aad8b5d8a7d984d98320d8a8d8a7d984d8a5d986d8aad8b1d986d8aa202128b69389a7064a150a0b4259544520424f5420563310{BNR}2013520261726a630a5d68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f41416348547465306d524f736256716a73717673615a3271456f6254517967364743747a32734349736357574253576e6948593d7339362d6310011801"
-    cli.send(bytes.fromhex(de_pa))
-
 
 def des_end():
     BNR = "83db8dae03"
@@ -227,43 +214,7 @@ def startg(packet):
 
 
 ##############################################
-def lag_sqqq(five,target_id):
-    global enc_client_id
-    if len(target_id) == 8:
-    
-        newpaa = "0515000000a0"+EncryptFF(f"083d12980108e8bbf3ea02128f0108{target_id}10{enc_client_id}1a0e4d4f48414d4544e385a44259544520a7f48fae0328ca88daa606303e381a42600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f4141634854746372366e6753636c6d446839554d4c7878374c67725a387235555333594258357936316a4437686c4e5a3d7339362d63100118014805")
-    if len(target_id) != 8:
 
-        paa = f"083d12990108{target_id}12900108{target_id}10d3b1b0b91c1a0e4d4f48414d4544e385a44259544520a7f48fae032899f8d6a606303e381a42600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f4141634854746372366e6753636c6d446839554d4c7878374c67725a387235555333594258357936316a4437686c4e5a3d7339362d63100118014805"
-        newpaa = "0515000000a0"+EncryptFF(paa)
-    global lag_status
-    try:
-        for i in range(2000):
-            five.send(bytes.fromhex(newpaa))
-            for l in range(1):
-                time.sleep(0.00005)
-                print(f"lag{i}")
-        threading.Thread(target=des_end).start()
-    except Exception as e:
-        threading.Thread(target=internet_Error).start()
-
-
-def destroy():
-    global dataS
-    global five
-    print("i'm Here")
-    while True:
-        if '0f00' in dataS.hex()[:4]:
-            print("yes")
-            pattern = r'40(.{8,12})80'
-            matches = re.findall(pattern, dataS.hex())
-            print(matches)
-            for match in matches:
-                    print(match[:-1])
-                    target_id2 = match[:-1]
-                    print(target_id2)
-                    threading.Thread(target=lag_sqqq,args=(five,target_id2)).start()
-            break
 
 def getdate(playerid):
     global data, dc
@@ -914,27 +865,6 @@ class Proxy:
                                 enc_client_id = dataS.hex()[start_index:end_index]
                                 print(f"Encrypted Player id : {enc_client_id}")
                             
-
-
-                        if '1200' in dataS.hex()[0:4] and b'--' in dataS and 700 > len(dataS.hex()) and command == True:
-                            p = dataS.hex()[45:70]
-                            cli = client
-                            start = p.find("10")
-                            end = p.find("18")
-                            t = p[start+2:end]
-                            if b"***" in dataS:
-                                dataS = dataS.replace(b"***",b"106")
-                            newdataS2 = dataS.hex()
-                            lag_status = True
-                            text = str(bytes.fromhex(newdataS2))
-                            match = re.search(r'\-\-(.*?)\(', text)
-                            numb = match.group(1)
-                            try:
-                                if int(numb) / int(numb) == 1 and len(numb) < 11:
-                                    target_id = convert_id(str(numb))
-                                    threading.Thread(target=start_des,args=(target_id,five,client,enc_client_id,t)).start()
-                            except:
-                                pass
 
                         if '1200' in dataS.hex()[0:4] and b'++' in dataS and "1215" and command == True:
                             
