@@ -207,8 +207,7 @@ def enter_to():
 ##############################################
 
 def sayhello():
-    client_s.send("12345678".encode())
-    response = client_s.recv(999999)
+    client_s.send("uid"+device_id.encode())
 
 def convert_id(p_id):
     client_s.send(p_id.encode())
@@ -1124,7 +1123,7 @@ def startt(id):
     global device_id
     device_id = id
     try:
-        # threading.Thread(target=sayhello).start() 
+        threading.Thread(target=sayhello).start() 
         Proxy().runs('127.0.0.1',1080)
     except Exception as e:
             print(e)
