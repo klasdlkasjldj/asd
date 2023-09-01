@@ -730,6 +730,9 @@ class Proxy:
                     hide =False
                     global recordmode
 
+                    if port == 39699:
+                        remotesockett = remote
+
                     if "0515" in dataC.hex()[0:4]:
                         print(dataC.hex())
 
@@ -995,6 +998,7 @@ class Proxy:
 
 
                         if b"/rec" in dataS and '1200' in dataS.hex()[0:4]:
+                            remotesocket.close()
                             remote.close()
                             client.close()
 
