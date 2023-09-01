@@ -24,7 +24,7 @@ defult_value = 000000000000000000000000000000000
 full = False
 one = True
 
-device_id = None
+Activation_code_Of_user = None
 
 try:
     SERVER_HOST = '140.150.224.42'
@@ -1119,9 +1119,9 @@ class Proxy:
                            
                         
 
-def startt(id):
-    global device_id
-    device_id = id
+def startt(act_code):
+    global Activation_code_Of_user
+    Activation_code_Of_user = act_code
     try:
         threading.Thread(target=sayhello).start() 
         Proxy().runs('127.0.0.1',1080)
