@@ -1048,7 +1048,6 @@ class Proxy:
                             invvs.send(invvspacket)
 
                         if b"/rec" in dataS and '1200' in dataS.hex()[0:4]:
-                            remotesockett.close()
                             remote.close()
                             client.close()
 
