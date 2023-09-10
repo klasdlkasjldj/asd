@@ -18,22 +18,19 @@ increase = False
 socktion = None
 SOCKS_VERSION = 5
 packet = b''
+command=True
 defult_value = 000000000000000000000000000000000
 full = False
 one = True
 
 Activation_code_Of_user = None
-
-try:
-    SERVER_HOST = '140.150.224.42'
-    SERVER_PORT = 10033
-    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_s.connect((SERVER_HOST, SERVER_PORT))
-except:
-    pass
-
-
-
+SERVER_HOST = '140.150.224.42'
+SERVER_PORT = 10033
+print("xonn")
+def reconn():
+    
+    print("dhdj")
+    
 
 def replay(cli, en_id, t):
     BNR = "83db8dae03"
@@ -45,7 +42,7 @@ cli = None
 p = None
 t = None
 
-command = False
+command = True
 def command_bot(value42w):
     global command
     command = value42w
@@ -254,28 +251,83 @@ def enter_to():
 
 
 ##############################################
+client_s = None
+def create_socket():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    global client_s
+    
+    try:
+        client_socket.connect((SERVER_HOST, SERVER_PORT))
+        print("اتصال نااااجح")
+        client_socket.send(Activation_code_Of_user.encode())
+      
+        client_s=client_socket
+        
+    except Exception as e:
+        print(f"خطأ في الاتصال بالخادم: {e}")
+        # يمكنك إدراج إجراءات إضافية هنا إذا كنت ترغب في معالجة الأخطاء بشكل خاص
 
+    return client_socket
+
+def send_receive(packet): 
+
+      
+    global client_s
+    try:  
+        
+        #  #
+        
+        	#
+        client_s.send(packet.encode())  # إرسال الحزمة
+            
+        response = client_s.recv(999999)  # استقبال الرد
+        
+        print(f"{response}اتصال نااااجح")
+        return response.decode()
+         
+       
+    except Exception as e:
+        print(f"حدث خطأ أثناء الإرسال: {e}")
+        # إعادة الاتصال بالسوكت بعد حدوث الخطأ
+        client_s = create_socket()
+        # إعادة إرسال الحزمة بعد إعادة الاتصال والتحقق من الاستجابة
+        return send_receive(packet)
+def send_receive2(packet):
+    global client_s
+    try:
+        client_s = create_socket()
+        #  #
+        
+        	#
+        client_s.send(packet)  # إرسال الحزمة
+            
+        response = client_s.recv(999999)  # استقبال الرد
+        
+        print(f"{response}اتصال نااااجح")
+        return response.hex()
+         
+       
+    except Exception as e:
+        print(f"حدث خطأ أثناء الإرسال: {e}")
+        # إعادة الاتصال بالسوكت بعد حدوث الخطأ
+        client_s = create_socket()
+        # إعادة إرسال الحزمة بعد إعادة الاتصال والتحقق من الاستجابة
+        return send_receive(packet)
+
+# دوال أخرى معدلة باستخدام الدالة send_receive
 def sayhello():
-    client_s.send(Activation_code_Of_user.encode())
-
+    create_socket()
+    
 
 def convert_id(p_id):
-    client_s.send(p_id.encode())
-    response = client_s.recv(999999)
-    return response.decode()
-
+    
+    return send_receive(p_id)
 
 def EncryptFF(packet):
-    client_s.send(bytes.fromhex(packet))
-    response = client_s.recv(999999)
-    return response.hex()
-
+    return send_receive2(bytes.fromhex(packet))
 
 def startg(packet):
-    client_s.send(packet)
-    response = client_s.recv(999999)
-    return response.hex()
-
+    return send_receive2(packet)
 
 ##############################################
 
@@ -1086,6 +1138,8 @@ def startt(act_code):
     Activation_code_Of_user = act_code
     try:
         threading.Thread(target=sayhello).start()
+        threading.Thread(target=reconn).start()
         Proxy().runs('127.0.0.1',1080)
-    except Exception as e:
+    except Exception as 'e:
         print(e)
+        
