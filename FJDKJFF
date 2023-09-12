@@ -6,36 +6,49 @@ import re
 import requests
 import random
 from datetime import datetime
+from time import sleep
 
 lag_status = False
 gameplayed = 0
 serversocket = None
-remotesockett = None
-clienttsocket = None
+remotesocket = None
+clientsocket = None
 istarted = False
 start = None
 increase = False
 socktion = None
 SOCKS_VERSION = 5
 packet = b''
-command=True
 defult_value = 000000000000000000000000000000000
 full = False
 one = True
 
 Activation_code_Of_user = None
-SERVER_HOST = '140.150.224.42'
-SERVER_PORT = 10033
-print("xonn")
-def reconn():
-    
-    print("dhdj")
-    
 
-def replay(cli, en_id, t):
-    BNR = "83db8dae03"
-    de_pa = f"12000000dd08{en_id}101220022ad00108{t}10{t}1802223a5b62d9905d5b63d9905d5b30306666d99030305dd8acd980d8a7d8b1d98a20d8afd8aed988d98420d8a7d984d8b3d983d988d8a7d8af202e2e2e28aefe88a7064a150a0b4259544520424f5420563310{BNR}2013520261726a630a5d68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f41416348547465306d524f736256716a73717673615a3271456f6254517967364743747a32734349736357574253576e6948593d7339362d6310011801"
-    cli.send(bytes.fromhex(de_pa))
+try:
+    SERVER_HOST = '140.150.224.42'
+    SERVER_PORT = 10033
+    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_s.connect((SERVER_HOST, SERVER_PORT))
+    print("Connected with Server Successfully")
+except:
+    pass
+
+
+
+
+def replay(c,packet,status):
+    if status == "2b2b":
+        c.send(bytes.fromhex(generate_msg(f"[ff4081][b][c]الدخـول مـعㅤㅤ\n\n[64ffda]{getname(number)}ㅤ", packet,"2b2b")))
+    if status == "2f35":
+        c.send(bytes.fromhex(generate_msg(f"[b][c][dd2c00]GROUP ㅤ ㅤ\n↘ㅤ\n\n[ff1744]  [00FF00]5", packet,"2f35")))
+    if status == "2f73":
+        c.send(bytes.fromhex(generate_msg(f"[b][c][ff9100]GAMEPLAY  ㅤ ㅤ\n\n[aa00ff]  STARTED", packet,"2f73")))
+    if status == "2f72":
+        c.send(bytes.fromhex(generate_msg(f"[b][c][00b0ff]You Are in Room !", packet,"2f72")))
+
+
+
 
 
 cli = None
@@ -48,14 +61,113 @@ def command_bot(value42w):
     command = value42w
     return command
 
+
+def lag_anyone(server,id):
+    global remotesocket,clientsocket
+    for i in range(1):
+        if 11 > len(id) >= 9:
+            p1 = f"083d12940108{id}128b0108{id}10a7c4839f1e1a0f42595445e385a4424f54e385a456332887f8e9a6063001380142600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d63100118014801"
+            p2 = "0515000000a0"+EncryptFF(p1)
+            p3 = bytes.fromhex(p2)
+            for i in range(250):
+                try:   
+                    server.send(p3)
+                    time.sleep(0.010)
+                    print(f"SEND PACKET --> [{i}]")
+                except Exception as q:
+                    break
+
+        if len(id) == 8:
+            packet = bytes.fromhex("0515000000a0"+EncryptFF(f"083d12920108{id}128a0108{id}10a7c4839f1e1a0f42595445e385a4424f54e385a4563328eaae82a8063017380742600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414367386f634c56614c486547346855746e724c5f374c51465f46495a747336326e4a34437453565562697a6e3153473d7339362d63100118014805"))
+            for i in range(250):
+                try:   
+                    server.send(packet)
+                    time.sleep(0.010)
+                    print(f"SEND PACKET --> [{i}]")
+                except Exception as q:
+                    break
+
+    else:
+        pass
+    
+
+def Get_Lead_for_lag(id,server,msg,pck):
+    global remotesocket,five
+    id = convert_id(id)
+
+    if 11 > len(id) >= 9:
+        packet = "0f1500000010"+EncryptFF(f"080112090a05{id}1005")
+        server.send(bytes.fromhex(packet))
+
+    if len(id) == 8:
+        packet = "0f1500000010"+EncryptFF(f"080112080a04{id}1005")
+        five.send(bytes.fromhex(packet))
+
+    global dataS
+    for i in range(3000):
+        if "0f00" in dataS.hex()[0:4]:
+            print(dataS.hex())
+            print(len(dataS.hex()))
+            print("Fitched !")
+            if 60 > len(dataS.hex()) > 40:
+                pakk = bytes.fromhex(generate_msg("[b][c][d500f9]Player :ㅤㅤ\n\n\t [d50000]Offline", pck ,"2d2d"))
+                msg.send(pakk)
+                break
+
+            if 70 < len(dataS.hex()) < 95:
+                pakk = bytes.fromhex(generate_msg("[b][c][d500f9]Player :ㅤㅤ\n\n\t [00ff00]Solo"  , pck ,"2d2d"))
+                msg.send(pakk)
+                break
+
+            if 130 > len(dataS.hex()) > 99:
+                pattern = r'40(.{8,12})80'
+                matches = re.findall(pattern, dataS.hex())
+                print(matches)
+                for match in matches:
+                    if "a20" not in match[0:3]:
+                        print("[-] Player In Squad [-]")
+                        pakk = bytes.fromhex(generate_msg("[b][c][d500f9]Player :ㅤㅤㅤ\n\n\t[00ff00]ㅤㅤin Group"  , pck ,"2d2d"))
+                        msg.send(pakk)
+                        target = match[:-1]
+                        try:
+                            pakk = bytes.fromhex(generate_msg("[b][c][d50000]جـاري التدمير ..."  , pck ,"2d2d"))
+                            msg.send(pakk)
+                        except:
+                            pass
+                        for i in range(2):
+                            threading.Thread(target=lag_anyone,args=(five,target)).start()
+                            time.sleep(2)
+                break
+        else:
+            print(f"[.] NOTHING [{i}]")
+            if i == 1999:
+                try:
+                    clientsocket.close()
+                except:
+                    pass
+
+
 def visible_ent(number,five,target_id):
     for i in range(1):
+        if len(number) == 8 and len(target_id) == 8 and number[0:1] == "1":
+            print("(8,8)--> 1")
+            packet = "051500000270"+EncryptFF(f"082112e50408{target_id}12024d45180220092a0e0107090a0b120d0f16191a1e2023320f42595445e385a4424f54e385a4563338c90140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{target_id}8001018a0187030a8001303946464233424545334630343230363032303442313036363636363030303030313734303030323031373230303836393636383138413830314239393636373431373432323134313130313033343037383566643433313831653964623062363463386431366530303030303066663430343032313031346664633033383110ad0f1add0177515b5d11024f75575843507f607e42037a760753606550515963720c77526a534f0f100b4d69475657455b607f57766b4048797a0f5a714b644e56026c4053020e100244624170606a540041025c06634f4f61550164726844754a540f78540e120a4d7b6c58500074715e767e566a6461564975586156424178725478620c1b084d737477795d187740057471627d5a7560785a67697e79766363027005120444037e7d6565777749044b07487649637f6b41087e7d4d61497142570c120c4b4e6a675707697c447c7f725b0251546e425877555f0244595a6e090c22047f575f5430073a0a1c0361016560070a15154207312e3130302e3948035002900101a201080a04494443311050ba01600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414367386f634c56614c486547346855746e724c5f374c51465f46495a747336326e4a34437453565562697a6e3153473d7339362d6310011801d20100")
+            five.send(bytes.fromhex(packet))
+            continue
+
+        if len(number) == 8 or len(number) == 9 and len(target_id) == 8:
+            print("--(8,8)--")
+            packet = "051500000270"+EncryptFF(f"082112e50408{target_id}12024d45180220092a0e0107090a0b120d0f16191a1e2023320f42595445e385a4424f54e385a4563338c90140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{target_id}8001018a0187030a800130383046393239324533453034323336303230313031303030303030303030303030313630303031303031353030303235463935313535373041353731353537343137343232313430303030303030303030303030303030303030303030303030303030303030303030303030306666303030303030303034363438333430361081011add0177515b5d11024f75575843507f607e42037a760753606550515963720c77526a534f0f100b4d69475657455b607f57766b4048797a0f5a714b644e56026c4053020e100244624170606a540041025c06634f4f61550164726844754a540f78540e120a4d7b6c58500074715e767e566a6461564975586156424178725478620c1b084d737477795d187740057471627d5a7560785a67697e79766363027005120444037e7d6565777749044b07487649637f6b41087e7d4d61497142570c120c4b4e6a675707697c447c7f725b0251546e425877555f0244595a6e090c22047f575f5430073a0a1c757c6563526b6115154207312e3130302e3948035002900101a201080a04494443311053ba01600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414367386f634c56614c486547346855746e724c5f374c51465f46495a747336326e4a34437453565562697a6e3153473d7339362d6310011801d20100")
+            five.send(bytes.fromhex(packet))
+            continue
+
         if number[0:1] == "1" and target_id == 8 and len(number) == 9:  #
             print("1")
             packet = "051500000270" + EncryptFF(
                 f"082112e50408{target_id}12024d45180220092a0f010407090a0b120d0f16191a1e2023320f42595445e385a4424f54e385a4563338c90140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{target_id}8001018a0186030a8001303946454233424545334630343230363032303942383037373737373030303030313641303030323031363830303939384245303045364630413134463944303431373432323134313130313033343637383566643433313831653964623062363463386431366530303030303066663436343632343031623836353638663510d7101add0177515b5d11024f75575843507f607e42037a760753606550515963720c77526a534f0f100b4d69475657455b607f57766b4048797a0f5a714b644e56026c4053020e10024408401763691d5b46537f4b0069510f795a56707f67586b427705580e120a4d7b6c58500074715e767e566a6461564975586156424178725478620c1b084d425456515f7b606f5c4b40017d5c707008527342015c5278611c4205120444051756456701754502577c4f5763707c0f55606d186d64611c414f0c120c4b57437c5773545273577a7b415403446e7b6474430d067002795a420c22047f575f5430073a09137e647b7b7c6a15154207312e3130302e3848035002900101a201080a04494443311052ba01600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801d20100")
             five.send(bytes.fromhex(packet))
             continue
+        
         if number[0:1] == "2" and target_id == 8 and len(number) == 9:  #
             print("2")
             packet = "051500000270" + EncryptFF(
@@ -126,7 +238,31 @@ def visible_ent(number,five,target_id):
             five.send(bytes.fromhex(packet))
             continue
 
+def generate_msg(replay,packet,ty):
+    replay = replay.encode().hex()
+    header = packet[0:8]
+    packetLength = packet[8:10]
+    paketBody = packet[10:32]
+    pyloadbodyLength = packet[32:34]
+    #------------get msg
+    start = packet.find(ty)
+    pyloadlength = packet[start-2:start]
+    w = packet[start:]
+    end = w.find("28")
+    pyloadtext = w[:end]
+    pyloadbody2 = packet[34:start-2]
+    #------------title
+    pyloadTile = w[end:]
+    NewTextLength = (hex((int(f'0x{pyloadlength}', 16) - int(len(pyloadtext) // 2)) + int(len(replay) // 2))[2:])
+    if len(NewTextLength) == 1:
+            NewTextLength = "0" + str(NewTextLength)
+    NewpaketLength = hex(((int(f'0x{packetLength}', 16) - int(len(pyloadtext) // 2)) - int(len(pyloadlength))) + int(len(replay) // 2) + int(len(NewTextLength)))[2:]
+    NewPyloadLength = hex(((int(f'0x{pyloadbodyLength}', 16) - int(len(pyloadtext) // 2)) - int(len(pyloadlength))) + int(len(replay) // 2) + int(len(NewTextLength)))[2:]
+    if len(NewPyloadLength) == 1:
+            NewPyloadLength = "0"+str(NewPyloadLength)
+    finallyPacket = header + NewpaketLength + paketBody + NewPyloadLength + pyloadbody2 + NewTextLength + replay + pyloadTile
 
+    return finallyPacket
 
 add_yout = False
 def youtubers(value42):
@@ -136,13 +272,18 @@ def youtubers(value42):
 
 
 def inv_ent(tat_id, cli, en_id, t):
-    BNR = "83db8dae03"
-    de_pa = f"12000000db08{en_id}101220022ace0108{t}10{t}180222385b62d9905d5b63d9905d5b30306666d99030305dd8acd980d8a7d8b1d98a20d8a7d984d8afd8aed988d98420d985d8aed981d98a202e2e2e28ebac89a7064a150a0b4259544520424f5420563310{BNR}2013520261726a630a5d68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f41416348547465306d524f736256716a73717673615a3271456f6254517967364743747a32734349736357574253576e6948593d7339362d6310011801"
-    cli.send(bytes.fromhex(de_pa))
-    pay = f"080112090a05{tat_id}1001"
-    new_pay = "0f1500000010" + EncryptFF(pay)
-    five.send(bytes.fromhex(new_pay))
-    threading.Thread(target=enter_to).start()
+    cli.send(bytes.fromhex(generate_msg("[b][c][e040fb]الدخول مخفي مع اللاعب ...",dataS.hex(),"2d2b")))
+
+    if t == 8:
+        packet = "0f1500000010"+EncryptFF(f"080112080a04{tat_id}1005")
+        five.send(bytes.fromhex(packet))
+        threading.Thread(target=enter_to).start()
+    else:
+        pay = f"080112090a05{tat_id}1001"
+        new_pay = "0f1500000010" + EncryptFF(pay)
+        five.send(bytes.fromhex(new_pay))
+        threading.Thread(target=enter_to2).start()
+
 
 
 def enter_to_game(enc_client_id):
@@ -153,18 +294,12 @@ def enter_to_game(enc_client_id):
 
 
 def player_info(p_id, getin, newdataS2):
-    print("Sending info")
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[00FF00][b][c]جـلـب مـعـلـومـات الحساب ..", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[4dd0e1][b][c]الأيدي : ", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[ff5722][b][c]{p_id}", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[4dd0e1][b][c]الإسـم : ", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[ff5722][b][c]{getname(p_id)}", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[4dd0e1][b][c]السيرفـر : ", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[ff5722][b][c]{getreg(p_id)}", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[4dd0e1][b][c]حالـة الحسـاب : ", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[ff5722][b][c]{get_status(p_id)}", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"[76ff03][b][c] تـاريخ الإنشـاء : ", newdataS2)))
-    getin.send(bytes.fromhex(gen_msgv2_clan(f"{getdate(p_id)}", newdataS2)))
+    getin.send(bytes.fromhex(generate_msg(f"[00FF00][b][c]-- Player information --", newdataS2,"2f2b")))
+    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤㅤiDㅤㅤㅤ\n\n[ff5722]{p_id}ㅤ", newdataS2,"2f2b")))
+    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤNAMEㅤㅤ\n\n[ff5722]{getname(p_id)}", newdataS2,"2f2b")))
+    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤSERVERㅤㅤ\n\n[ff5722]{getreg(p_id)}ㅤㅤㅤ", newdataS2,"2f2b")))
+    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤ-STATUS-ㅤ  [ff5722]\n\n"+get_status(p_id),newdataS2,"2f2b")))
+    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤCreated inㅤ\n\nㅤ{getdate(p_id)}", newdataS2,"2f2b")))
 
 
 def fake_frind(target_id, cw, cli, en_id, t):
@@ -214,15 +349,12 @@ def runsnv():
 
 def enter(t_id):
     global five, dataS, c_p, cw
-
     if len(number) == 10:
         five.send(bytes.fromhex("051500000270" + EncryptFF(
             f"082112e10408{t_id}12024d45180220092a0e010407090a0b120f16191a1e20233211534849524fe385a4485550e385a4efa3bf380140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{t_id}8001018a0187030a8001303946464233424632344334453135443032303638363035353535353030303030313130303030323031304530303631313933333134343530383435313434353431373432323134313130313033326137383566643433313831653964623062363463386431366530303030303066663261326531363031346636356161623610bc0a1add017650545212074e735e594b507f697a43077a7e0f5a6f635e515d61730d7e546352450a120845694156594054637c5d7f64404f737a06587b406247510163465b090514024a035365747b0e7657417c024241604f434b63557c4972715d017e7f0f14034c6f5c0250075a501e475a7355634c057575076859447f0645447247041b0e4d4056435c637f6f6e055c6a7901660a0b00764501547f690f7507600b11024d550c7b045e7f53555e764a404f500f7046597177795b6b607542090d1a0c4b670e676d70436848604354795540430f76446b04006d69006b7e620c22047757595430073a0a1571607a5071787f13154207312e3130302e3348035002900101a201080a04494443311065ba01520a4c68747470733a2f2f67726170682e66616365626f6f6b2e636f6d2f76392e302f3534333935303432363130353731322f706963747572653f77696474683d313630266865696768743d31363010011801c001c6dd8dae03d20100")))
-
     if len(number) == 9:
         five.send(bytes.fromhex("051500000270" + EncryptFF(
             f"082112e60408{t_id}12024d45180220092a0e010407090a0b120f16191a1e2023320f42595445e385a4424f54e385a45633380140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{t_id}8001018a0185030a8001303946454233424545334630343230363032303339303035353535353030303030313131303030323031304630303637313336423139363330393633313936333431373432323134313130313033326637383566643433313831653964623062363463386431366530303030303066663264333131383031653466396562313110fb0e1add0177515b5d11024f75575843507f607e42037a760753606550515963720c77526a534f0f100b4d69475657455b607f57766b4048797a0f5a714b644e56026c4053020e10024400556c737a04725546760442496e4f4649665673497370520e7d7a0e120a4d675c0259035b541e4f527a5a65420571770669504276074f4170440c1b084d4e534c5f60756661055b607908640000067f42025b7961047e036005120444520d71005c7859535e7e44404a520a7349597076765468657444000c120c4b6e0a6669704b60416f455a795142420e7f4262050a686b03637e640c22047f575f5430073a081c617f747b6115154207312e3130302e3348035002900101a201080a04494443311053ba01600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801d201020801")))
-
     if len(number) == 8:
         five.send(bytes.fromhex("051500000280" + EncryptFF(
             f"082112ee0408{t_id}12024d45180220092a0e010407090a0b120f16191a1e2023320e4d4f48414d4544e385a4425954453801408b084864520245475a203734323862323533646566633136343031386336303461316562626665626466600168e8bbf3ea028001018a0186030a8001303946464233424543373343423846323032303231363031313131313030303030303636303030323030363430303045303332463336383030383830333638303431373432323134313130313033303637383566643433313831653964623062363463386431366530303030303066663036303630343031653463326635653910f9021add01705e555411024e71595a445f71697e42027e7805546f6b5951596276027555655d460f100a49674551584b52607f567265424f7674065a714a60405405634e5a020e11064a0252637d7304725442780645466046464967527d4b747f5c077d7a0f16044f60530c50035b551a41507d556b4b0571760267524579094641704508150a4a415d455f6074626f075c6f770164000102714005547768047e02640b10034b5c0471005d7c575159714a494a520b77475b7779785d686575400e0e150345670a666874456246604b5379514346007d456d0b03686b026770660b22047b595d5330073a091d7c710067066617124207312e3130302e3348035002900103980106a201090a044944433110ac02ba01600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f4141634854746372366e6753636c6d446839554d4c7878374c67725a387235555333594258357936316a4437686c4e5a3d7339362d6310011801c001a7f48fae03d20100")))
@@ -233,101 +365,74 @@ def enter_to():
     global five
     global cw
     global enc_client_id
+    global remotesocket
+    global clientsocket
     while True:
-        if '0f00' in dataS.hex()[:4] and len(dataS.hex()) < 120:
+        if '0f00' in dataS.hex()[:4] and len(dataS.hex()) < 130:
             print("yes")
             pattern = r'40(.{8,12})80'
             matches = re.findall(pattern, dataS.hex())
+            print("matches" , matches)
+            if matches == []:
+                break
             for match in matches:
                 print(match[:-1])
                 target_id2 = match[:-1]
-                print("Enter SQuad")
-
-                ent_packet = f"050000049e08{enc_client_id}100520062a910908{target_id2}12024d4518012003328b0508{target_id2}120e4d4f48414d4544e385a4425954451a024d4520a4d1d5a606281e30a7cbd13038324218c091e660c0b5ce648096a36180c3856680a89763c09ae06148015001588b0868a7f48fae0382011808d1daf1eb04180420d487d4f0042a0808c79d85f304100392010c0107090a0b120f16191a1e20980103a00106c00101c80101e80101fa010808021006180f2859fa010a08021006180f20012859fa010a08021006180f20032859fa010a08021006180f20042859fa010808021009181b2859fa010a08021009181b20012859fa010a08021009181b20032859fa010a08021009181b20042859fa010808021001181b2859fa010a08021001181b20012859fa010a08021001181b20032859fa010a08021001181b20042859fa010a08021002180120012859fa010a08021002180120032859fa0108080210021801284f880208920208ae2dce01c205ee07aa0208080110e43218807daa0208080f10ad3218904eaa0205081710e432aa0205082b10d832aa0205080210e432aa0205081810ad32aa0205081a10ad32aa0205081c10ad32aa0205082010ad32aa0205082210ad32aa0205082110ad32aa0205082310ad32aa0205083110d832aa0205083910ad32aa0205083d10ad32aa0205084110ad32aa0205084910d836aa0205084d10e432aa0205081b10ad32aa0205083410ad32aa0205082810e432aa0205082910e432c2021712041a0201041a090848120501040506071a0208502200ea02600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f4141634854746372366e6753636c6d446839554d4c7878374c67725a387235555333594258357936316a4437686c4e5a3d7339362d6310011801f202008a030032a70308{enc_client_id}120f42595445e385a4424f54e385a456331a024d4520b2d1d5a60628013085cbd13038324218c091e66080a89763c0b5ce64c09ae0618096a36180c385664801500158e80792010c0107090a0b120f16191a1e20980101c00101c80101e801018802089202029603aa0208080110e43218807daa0209080f10e43218f0ab01aa0205080210e432aa0205081810e432aa0205081a10e432aa0205081c10e432aa0205082010e432aa0205082210e432aa0205082110e432aa0205081710e432aa0205082310e432aa0205082b10e432aa0205083110e432aa0205083910e432aa0205083d10e432aa0205084110e432aa0205084910d836aa0205084d10e432aa0205081b10e432aa0205083410e432aa0205082810e432aa0205082910e432c2021712041a0201041a090848120501040506071a0208502200ea02600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d63100118018a030208013a020116400150015a07313232323530346801721e313639313730373535363633303138323130315f7937667a72376d306a62880180e08babfd9dd1b917a20100b00114ea010449444331"
+               #8 
+                ent_packet = f"050000052608{enc_client_id}100520062a990a08{target_id2}12024d451801200332e90408{enc_client_id}120f42595445e385a4424f54e385a456331a024d45208d9683a80628073087cbd1303832420cc091e660c496a361c09ae061480150c90158e8077a058d97c5b00392010f010407090a0b120d0f16191a1e2023980101c00101c80101e80101fa010808021006180f2859fa010a08021006180f20012859fa010a08021006180f20032859fa010a08021006180f20042859fa010808021009181b2859fa010a08021009181b20012859fa010a08021009181b20032859fa010a08021009181b20042859fa010808021001181b2859fa010a08021001181b20012859fa010a08021001181b20032859fa010a08021001181b20042859fa010a08021002180120012859fa010a08021002180120032859fa0108080210021801284f880208920208c205ce01ae2daa26aa0208080110e43218807daa0207080f10cf31202baa0205082b10a432aa0205080210e432aa0205081810cf31aa0205081a10cf31aa0205081c10cf31aa0205082010cf31aa0205082210cf31aa0205082110cf31aa0205081710e432aa0205082310cf31aa0205083110a432aa0205083910cf31aa0205083d10cf31aa0205084110cf31aa0205084910d836aa0205084d10e432aa0205081b10cf31aa0205083410cf31aa0205082810e432aa0205082910e432c2021a12041a0201041a090848120501040506071a0508501201632200ea02600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414367386f634c56614c486547346855746e724c5f374c51465f46495a747336326e4a34437453565562697a6e3153473d7339362d6310011801f202008a030032df0408{target_id2}1221efbca2efbcb9efbcb4efbca5e385a4efbca2efbcafefbcb4e385a4efbcb6efbc931a024d4520ad9483a806284a3093cbd13038324218b597a361929be061eeb5ce6496bace64e7c38566ef94e660480150d801589e1660d4d6d0ad0368c4db8dae037a0a91d6cab0038288f0b20382011808fedaf1eb041804208589d4f0042a0808c89d85f30410038801c2ffc4b00392010e0107090a0b120d0f16191a1e2023980113a00150c00101c80101e8010bf00129880203920208be17e532da16b609aa0207080110a5472001aa0208080210903518d00faa0205080310bc37aa020b080f10ca9b01188827206faa0205081710904eaa0205081810b938aa0205081b10e732aa0205082110cd34aa0205082310e937aa0205082b109430aa0206083d10ea9401aa02050849109633aa0206081a10ca9b01aa0206081c10ca9b01aa0206082010ca9b01aa0206082210ca9b01aa02050831109430aa0206083910ca9b01aa0206084110ca9b01aa0205084d10e432aa0206083410ca9b01aa0205082810e432aa0205082910e432c2026512041a0201041a3f08481207010405060702031a0b0801100318fc0220d3ca031a0b0803100418af0720bdfd161a0b0807100118ff0120f6830b1a0b0802100418a00420fe87071a0508501201632215121365ed0e890ed9049103ad02f503f90abd05a106ea02520a4c68747470733a2f2f67726170682e66616365626f6f6b2e636f6d2f76392e302f3535373036373333313332353638352f706963747572653f77696474683d313630266865696768743d31363010011801f202090883cab5ee0110d4048a03003a011a403e50056801721e313639343535303537333339343936343535375f3138706b6d703030636d880180808ca3f6c5e8ce17a20100ea010449444331"
                 cw.send(bytes.fromhex(ent_packet))
-                five.send(b'\x05\x03\x00\x00')
+                remotesocket.close()
 
             break
 
+def enter_to2():
+    global dataS
+    global five
+    global cw
+    global enc_client_id
+    global remotesocket
+    global clientsocket
+    while True:
+        if '0f00' in dataS.hex()[:4] and len(dataS.hex()) < 130:
+            print("yes")
+            pattern = r'40(.{8,12})80'
+            matches = re.findall(pattern, dataS.hex())
+            print(matches)
+            if matches == []:
+                clientsocket.close()
+            for match in matches:
+                print(match[:-1])
+                target_id2 = match[:-1]
+                ent_packet = f"050000049e08{enc_client_id}100520062a910908{target_id2}12024d4518012003328b0508{target_id2}120e4d4f48414d4544e385a4425954451a024d4520a4d1d5a606281e30a7cbd13038324218c091e660c0b5ce648096a36180c3856680a89763c09ae06148015001588b0868a7f48fae0382011808d1daf1eb04180420d487d4f0042a0808c79d85f304100392010c0107090a0b120f16191a1e20980103a00106c00101c80101e80101fa010808021006180f2859fa010a08021006180f20012859fa010a08021006180f20032859fa010a08021006180f20042859fa010808021009181b2859fa010a08021009181b20012859fa010a08021009181b20032859fa010a08021009181b20042859fa010808021001181b2859fa010a08021001181b20012859fa010a08021001181b20032859fa010a08021001181b20042859fa010a08021002180120012859fa010a08021002180120032859fa0108080210021801284f880208920208ae2dce01c205ee07aa0208080110e43218807daa0208080f10ad3218904eaa0205081710e432aa0205082b10d832aa0205080210e432aa0205081810ad32aa0205081a10ad32aa0205081c10ad32aa0205082010ad32aa0205082210ad32aa0205082110ad32aa0205082310ad32aa0205083110d832aa0205083910ad32aa0205083d10ad32aa0205084110ad32aa0205084910d836aa0205084d10e432aa0205081b10ad32aa0205083410ad32aa0205082810e432aa0205082910e432c2021712041a0201041a090848120501040506071a0208502200ea02600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f4141634854746372366e6753636c6d446839554d4c7878374c67725a387235555333594258357936316a4437686c4e5a3d7339362d6310011801f202008a030032a70308{enc_client_id}120f42595445e385a4424f54e385a456331a024d4520b2d1d5a60628013085cbd13038324218c091e66080a89763c0b5ce64c09ae0618096a36180c385664801500158e80792010c0107090a0b120f16191a1e20980101c00101c80101e801018802089202029603aa0208080110e43218807daa0209080f10e43218f0ab01aa0205080210e432aa0205081810e432aa0205081a10e432aa0205081c10e432aa0205082010e432aa0205082210e432aa0205082110e432aa0205081710e432aa0205082310e432aa0205082b10e432aa0205083110e432aa0205083910e432aa0205083d10e432aa0205084110e432aa0205084910d836aa0205084d10e432aa0205081b10e432aa0205083410e432aa0205082810e432aa0205082910e432c2021712041a0201041a090848120501040506071a0208502200ea02600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d63100118018a030208013a020116400150015a07313232323530346801721e313639313730373535363633303138323130315f7937667a72376d306a62880180e08babfd9dd1b917a20100b00114ea010449444331"
+                cw.send(bytes.fromhex(ent_packet))
+                remotesocket.close()
+
+            break
 
 ##############################################
-client_s = None
-def create_socket():
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    global client_s
-    
-    try:
-        client_socket.connect((SERVER_HOST, SERVER_PORT))
-        print("اتصال نااااجح")
-        client_socket.send(Activation_code_Of_user.encode())
-      
-        client_s=client_socket
-        
-    except Exception as e:
-        print(f"خطأ في الاتصال بالخادم: {e}")
-        # يمكنك إدراج إجراءات إضافية هنا إذا كنت ترغب في معالجة الأخطاء بشكل خاص
 
-    return client_socket
-
-def send_receive(packet): 
-
-      
-    global client_s
-    try:  
-        
-        #  #
-        
-        	#
-        client_s.send(packet.encode())  # إرسال الحزمة
-            
-        response = client_s.recv(999999)  # استقبال الرد
-        
-        print(f"{response}اتصال نااااجح")
-        return response.decode()
-         
-       
-    except Exception as e:
-        print(f"حدث خطأ أثناء الإرسال: {e}")
-        # إعادة الاتصال بالسوكت بعد حدوث الخطأ
-        client_s = create_socket()
-        # إعادة إرسال الحزمة بعد إعادة الاتصال والتحقق من الاستجابة
-        return send_receive(packet)
-def send_receive2(packet):
-    global client_s
-    try:
-        client_s = create_socket()
-        #  #
-        
-        	#
-        client_s.send(packet)  # إرسال الحزمة
-            
-        response = client_s.recv(999999)  # استقبال الرد
-        
-        print(f"{response}اتصال نااااجح")
-        return response.hex()
-         
-       
-    except Exception as e:
-        print(f"حدث خطأ أثناء الإرسال: {e}")
-        # إعادة الاتصال بالسوكت بعد حدوث الخطأ
-        client_s = create_socket()
-        # إعادة إرسال الحزمة بعد إعادة الاتصال والتحقق من الاستجابة
-        return send_receive(packet)
-
-# دوال أخرى معدلة باستخدام الدالة send_receive
 def sayhello():
-    create_socket()
-    
+    client_s.send(Activation_code_Of_user.encode())
+
 
 def convert_id(p_id):
-    
-    return send_receive(p_id)
+    client_s.send(p_id.encode())
+    response = client_s.recv(999999)
+    print(f"RESPONSE --> {response}")
+    return response.decode()
+
 
 def EncryptFF(packet):
-    return send_receive2(bytes.fromhex(packet))
+    client_s.send(bytes.fromhex(packet))
+    response = client_s.recv(999999)
+    return response.hex()
+
 
 def startg(packet):
-    return send_receive2(packet)
+    client_s.send(packet)
+    response = client_s.recv(999999)
+    return response.hex()
+
 
 ##############################################
 
@@ -335,7 +440,7 @@ def startg(packet):
 def getdate(playerid):
     global data, dc
     try:
-        data = requests.get(f"http://88.198.53.59:19350/info/{playerid}").json()
+        data = requests.get(f"http://bytehttprequest.mcpe.lol:25658/info/{playerid}").json()
         dc = data["date"]
         print(dc)
 
@@ -347,7 +452,7 @@ def getdate(playerid):
         days = (delta.days % 365) % 30
         return f"[b][c][ffea00]{dc}\n\n[18ffff]{years} سنوات \n\n{months} شهور \n\n{days} يوم "
     except:
-        return f"[b][c][ffea00]{dc}"
+        return f"[b][c][ffea00]أقل من شـهـر"
 
 
 def getreg(Id):
@@ -626,6 +731,10 @@ class Proxy:
             reply = self.generate_failed_reply(address_type, 5)
 
         connection.sendall(reply)
+        if port2 == 39699:
+            print(f"Connected with {port2}")
+        elif port2 == 39801 or port2 == 39699:
+            print(f"Connected with {port2}")
 
         self.botdev(connection, remote, port2)
 
@@ -804,8 +913,8 @@ class Proxy:
             global hidd
             if client in r or remote in r:
                 global serversocket
-                global remotesockett
-                global clientsockett
+                global remotesocket
+                global clientsocket
                 if client in r:
                     global team
                     global one
@@ -825,11 +934,8 @@ class Proxy:
                     hide = False
                     global recordmode
 
-                    if port == 39699:
-                        remotesockett = remote
-
-                    if "0515" in dataC.hex()[0:4]:
-                        print(dataC.hex())
+                    if port == 39699 or "0515" in dataC.hex()[0:4]:
+                        clientsocket = remote
 
                     if '0515' in dataC.hex()[0:4] and len(dataC.hex()) >= 141:
                         hide = True
@@ -837,11 +943,9 @@ class Proxy:
                         team = remote
                         teams = client
                         packett = dataC
-                        print("ENTER TO SQUAD Def")
 
                     if '0515' in dataC.hex()[0:4] and 30 < len(dataC.hex()) < 50:  # EXIT FROM SQUAD
                         packett1 = dataC
-                        print("EXIT FROM SQUAD Def")
 
                     if recordmode == True:
                         if '1215' in dataC.hex()[0:4]:
@@ -853,6 +957,8 @@ class Proxy:
                             # print('closeing record ')
                             b = threading.Thread(target=spam, args=(remote, spampacket))
                             b.start()
+
+
                     #####
 
                     if port == 39699:
@@ -931,6 +1037,14 @@ class Proxy:
 
                     dataS = remote.recv(999999)
 
+                    if "0f15" in dataC.hex()[0:4] and len(dataC.hex()) < 100:
+                        print('-------------------------')
+                        print(dataC.hex())
+                        print('-------------------------')
+
+                    if port == 39801 or "1200" in dataS.hex()[0:4]:
+                        remotesocket = client
+
                     if '1200' in dataS.hex()[0:4] and b'GroupID' in dataS and packet0300 == True:
                         from time import sleep
                         lis = [p1, p2, p3, p4, p5]
@@ -938,6 +1052,7 @@ class Proxy:
                             remote.send(msg)
                             sleep(0.3)
                             packet0300 = False
+                        
 
                     else:
                         if client.send(dataS) <= 0:
@@ -957,36 +1072,79 @@ class Proxy:
                             if start_index != -1 and end_index != -1:
                                 enc_client_id = dataS.hex()[start_index:end_index]
                                 print(f"Encrypted Player id : {enc_client_id}")
+                            try:       #18 , 19 ,20
+                                cw.send(bytes.fromhex("060000006808d4d7faba1d100620022a5c08a7c4839f1e1a1b5b3030464646465d42595445e385a44d686d645b3030464646465d32024d45404db00113b801a528d801d4d8d0ad03e001bfdc8dae03f00101f8019a018002fd98a8dd03900201d0020cd8022ee002b2e9f7b103"))
+                                client.send(bytes.fromhex(f"12000000e808{enc_client_id}101220022adb0108a7c4839f1e10{enc_client_id}180222485b62d990d9905d5b63d990d9905d5b6635303035d990375dd8a3d988d8a7d985d980d8b120d8aad980d8b4d980d8bad980d98ad980d98420d8a7d984d980d8a8d980d988d8aa202128a7dd81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28c6dd81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000d708{enc_client_id}101220022aca0108a7c4839f1e10{enc_client_id}180222375b62d9905d5b63d9905d5b303046d9904630305d20d8aad8afd985d98ad8b120d981d8b1d98ad98220d8a8d8a7d984d8a3d98ad8afd98a2880de81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000b908{enc_client_id}101220022aac0108a7c4839f1e10{enc_client_id}180222195b62d9905d5b63d9905d5b303046d9904630305d202d2d6964289bde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000da08{enc_client_id}101220022acd0108a7c4839f1e10{enc_client_id}1802223a5b62d9905d5b63d9905d5b303046d9904630305d20d8afd8aed980d988d98420d8b3d983d988d8a7d8af20d8bad98ad8b120d985d8b1d8a6d98a28bedf81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000b908{enc_client_id}101220022aac0108a7c4839f1e10{enc_client_id}180222195b62d9905d5b63d9905d5b303046d9904630305d202d2b696428dddf81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000d508{enc_client_id}101220022ac80108a7c4839f1e10{enc_client_id}180222355b62d9905d5b63d9905d5b303046d9904630305d20d8afd8aed980d988d98420d8b3d983d988d8a7d8af20d8b8d980d8a7d987d8b12880e081a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000b908{enc_client_id}101220022aac0108a7c4839f1e10{enc_client_id}180222195b62d9905d5b63d9905d5b303046d9904630305d202b2b69642893e081a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000d708{enc_client_id}101220022aca0108a7c4839f1e10{enc_client_id}180222375b62d9905d5b63d9905d5b303046d9904630305dd8acd984d8a820d985d8b9d984d988d985d8a7d8aa20d8b9d98620d984d8a7d8b9d8a828b5e081a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ba08{enc_client_id}101220022aad0108a7c4839f1e10{enc_client_id}1802221a5b62d9905d5b63d9905d5b303046d9904630305d2fd9902b696428d1e081a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000da08{enc_client_id}101220022acd0108a7c4839f1e10{enc_client_id}1802223a5b62d9905d5b63d9905d5b303046d9904630305dd8b1d8acd988d8b920d984d984d8b1d988d98520d984d98820d8add8af20d8b7d8b1d8afd98328f8e081a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ba08{enc_client_id}101220022aad0108a7c4839f1e10{enc_client_id}1802221a5b62d9905d5b63d9905d5b303046d9904630305d2f72d99065742890e181a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000d308{enc_client_id}101220022ac60108a7c4839f1e10{enc_client_id}180222335b62d9905d5b63d9905d5b303046d9904630305dd8afd8aed988d98420d8a3d98a20d8b1d988d98520d985d8aed980d981d98a28f4e181a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ba08{enc_client_id}101220022aad0108a7c4839f1e10{enc_client_id}1802221a5b62d9905d5b63d9905d5b303046d9904630305d2f72d9906964288fe281a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000cb08{enc_client_id}101220022abe0108a7c4839f1e10{enc_client_id}1802222b5b62d9905d5b63d9905d5b303046d9904630305dd8b5d980d8afd98ad980d98220d988d987d980d985d98a28c8e281a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ba08{enc_client_id}101220022aad0108a7c4839f1e10{enc_client_id}1802221a5b62d9905d5b63d9905d5b303046d9904630305d2f66d990696428e0e281a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000d508{enc_client_id}101220022ac80108a7c4839f1e10{enc_client_id}180222355b62d9905d5b63d9905d5b3030666630d990305d20d8b1d8acd988d8b920d985d8aed981d98a20d984d984d8b3d983d988d8a7d8af2896e481a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000d508{enc_client_id}101220022ac80108a7c4839f1e10{enc_client_id}180222355b62d9905d5b63d9905d5b3030666630d990305d20d8b3d8a8d8a7d98520d8b7d984d8a8d8a7d8aa20d8a5d986d8b6d985d8a7d98528d7e481a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000c808{enc_client_id}101220022abb0108a7c4839f1e10{enc_client_id}180222285b62d9905d5b63d9905d5b3030666630d990305d20d8b3d8a8d8a7d98520d8b1d8b3d8a7d8a6d98428f6e481a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000dd08{enc_client_id}101220022ad00108a7c4839f1e10{enc_client_id}1802223d5b62d9905d5b63d9905d5b3030666630d990305d20d8a5d8b6d8a7d981d8a920d8acd985d98ad8b920d8a7d984d98ad988d8aad98ad988d8a8d8b1d8b228abe581a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ce08{enc_client_id}101220022ac10108a7c4839f1e10{enc_client_id}1802222e5b62d9905d5b63d9905d5b3030666630d990305d20d8a7d984d988d8b6d8b920d8a7d984d985d8acd986d988d98628cae581a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                                client.send(bytes.fromhex(f"12000000ca08{enc_client_id}101220022abd0108a7c4839f1e10{enc_client_id}1802222a5b62d9905d5b63d9905d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d28ccde81a7064a150a0f42595445e385a4424f54e385a4563320013802520261726a600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d6310011801"))
+                            except:
+                                pass
 
                         if '1200' in dataS.hex()[0:4] and b'++' in dataS and "1215" and command == True:
-
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***", b"106")
+
                             newdataS2 = dataS.hex()
                             text = str(bytes.fromhex(newdataS2))
                             match = re.search(r'\+\+(.*?)\(', text)
                             number = match.group(1)
+                            print(number)
                             try:
                                 if int(number) / int(number) == 1 and len(number) < 11:
                                     p = dataS.hex()[45:70]
                                     start = p.find("10")
                                     end = p.find("18")
                                     t = p[start + 2:end]
-                                    threading.Thread(target=replay, args=(client, enc_client_id, t)).start()
+                                    # client.send(bytes.fromhex(generate_msg(f"[ff4081][b][c]الدخـول مـعㅤㅤ\n\n[64ffda]{getname(number)}ㅤ", dataS.hex(),"2b2b")))
+                                    threading.Thread(target=replay,args=(client,dataS.hex(),"2b2b")).start()
                                     target_id = convert_id(str(number))
                                     threading.Thread(target=visible_ent,args=(number,five,target_id)).start()
                             except:
                                 pass
+                        
+                        if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 599:
+                            if b"***" in dataS:
+                                dataS = dataS.replace(b"***",b"106")
 
-                        if b"/555" in dataS and "1215" in dataC.hex()[0:4] and command == True:
+                            start = str(dataS).find("--")
+                            end = str(dataS).find("(")
+                            Player_id = str(dataS)[start+2:end]
+                            print(f"Player id -- > {Player_id}")
+                            threading.Thread(target=Get_Lead_for_lag,args=(Player_id,five,client,dataS.hex())).start()
+
+
+
+                        if b"/5(" in dataS and "1215" in dataC.hex()[0:4] and command == True:
+                            threading.Thread(target=replay,args=(client,dataS.hex(),"2f35")).start()
                             threading.Thread(target=g5, args=(enc_client_id, cw, five)).start()
 
                         if '1200' in dataS.hex()[0:4] and b'-+' in dataS and command == True:
-                            p = dataS.hex()[45:70]
-                            cli = client
-                            start = p.find("10")
-                            end = p.find("18")
-                            t = p[start + 2:end]
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***", b"106")
                             print("enteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeer")
@@ -994,14 +1152,18 @@ class Proxy:
                             text = str(bytes.fromhex(newdataS2))
                             match = re.search(r'\-\+(.*?)\(', text)
                             number = match.group(1)
-                            try:
-                                if int(number) / int(number) == 1 and len(number) < 11:
-                                    target_id = convert_id(str(number))
-                                    threading.Thread(target=inv_ent, args=(target_id, client, enc_client_id, t)).start()
-                            except:
-                                pass
+                            if int(number) / int(number) == 1 and len(number) < 11:
+                                print("started")
+                                target_id = convert_id(str(number))
+                                if len(target_id) == 8:
+                                    t = 8
+                                else:
+                                    t = 9
+                                threading.Thread(target=inv_ent, args=(target_id, client, enc_client_id, t)).start()
+
 
                         if "1200" in dataS.hex()[0:4] and b"/r" in dataS and 700 > len(dataS.hex()) and command == True:
+                            threading.Thread(target=replay,args=(client,dataS.hex(),"2f72")).start()
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***", b"106")
                             start_marker = b'/r'
@@ -1029,13 +1191,9 @@ class Proxy:
                             cmodeloop = False
                             cmodeinfo = True
 
-                        if b"/sss" in dataS and "1215" in dataC.hex()[0:4] and command == True:
-                            print("Start_game")
+                        if b"/s(" in dataS and "1215" in dataC.hex()[0:4] and command == True:
+                            threading.Thread(target=replay,args=(client,dataS.hex(),"2f73")).start()
                             threading.Thread(target=enter_to_game, args=(enc_client_id,)).start()
-
-                        if b"/hhh" in dataS:
-                            five.send(bytes.fromhex(
-                                ("051500000010" + startg(b'\x08\t\x12\x06\x08' + bytes.fromhex("f7c0ddf705")))))
 
                         if port == 39699:
                             invite = client
@@ -1075,11 +1233,6 @@ class Proxy:
                                 hidd = client
                                 hide = False
 
-                        if b"/ref" in dataS and "1200" in dataS.hex()[0:4] and 430 > len(
-                                dataS.hex()) > 200 and command == True:
-                            print("Done Send Packet ..")
-                            invvs.send(invvspacket)
-
                         if b"/rec" in dataS and '1200' in dataS.hex()[0:4]:
                             remote.close()
                             client.close()
@@ -1100,6 +1253,7 @@ class Proxy:
                             end_index = dataS.find(end_marker, start_index)
                             value_bytes = dataS[start_index:end_index]
                             number = value_bytes.decode('utf-8')
+                            client.send(bytes.fromhex(generate_msg(f"[ff6f00][b][c]جاري إضـافة اللاعب ..",dataS.hex(),"2f66")))
                             try:
                                 if int(number) / int(number) == 1 and len(number) < 11:
                                     target_id = convert_id(str(number))
@@ -1122,15 +1276,13 @@ class Proxy:
                                     threading.Thread(target=player_info, args=(number, getin, newdataS2)).start()
                             except:
                                 pass
+
                         if add_yout == True:
                             add_yout = False
-                            from time import sleep
                             for h in yout_list:
                                 invite.send(h)
                                 sleep(0.2)
 
-                        if b'/ret' in dataS and '1200' in dataS.hex()[0:4] and 700 > dataS.hex():
-                            clieee.send(lag)
 
 
 def startt(act_code):
@@ -1138,8 +1290,6 @@ def startt(act_code):
     Activation_code_Of_user = act_code
     try:
         threading.Thread(target=sayhello).start()
-        threading.Thread(target=reconn).start()
         Proxy().runs('127.0.0.1',1080)
     except Exception as e:
         print(e)
-        
