@@ -294,13 +294,15 @@ def enter_to_game(enc_client_id):
 
 
 def player_info(p_id, getin, newdataS2):
-    getin.send(bytes.fromhex(generate_msg(f"[00FF00][b][c]-- Player information --", newdataS2,"2f2b")))
-    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤㅤiDㅤㅤㅤ\n\n[ff5722]{p_id}ㅤ", newdataS2,"2f2b")))
-    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤNAMEㅤㅤ\n\n[ff5722]{getname(p_id)}", newdataS2,"2f2b")))
-    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤSERVERㅤㅤ\n\n[ff5722]{getreg(p_id)}ㅤㅤㅤ", newdataS2,"2f2b")))
-    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤ-STATUS-ㅤ  [ff5722]\n\n"+get_status(p_id),newdataS2,"2f2b")))
-    getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤCreated inㅤ\n\nㅤ{getdate(p_id)}", newdataS2,"2f2b")))
-
+    try:
+        getin.send(bytes.fromhex(generate_msg(f"[00FF00][b][c]-- Player information --", newdataS2,"2f2b")))
+        getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤㅤiDㅤㅤㅤ\n\n[ff5722]{p_id}ㅤ", newdataS2,"2f2b")))
+        getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤNAMEㅤㅤ\n\n[ff5722]{getname(p_id)}", newdataS2,"2f2b")))
+        getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤSERVERㅤㅤ\n\n[ff5722]{getreg(p_id)}ㅤㅤㅤ", newdataS2,"2f2b")))
+        getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤㅤ-STATUS-ㅤ  [ff5722]\n\n"+get_status(p_id),newdataS2,"2f2b")))
+        getin.send(bytes.fromhex(generate_msg(f"[4dd0e1][b][c]ㅤCreated inㅤ\n\nㅤ{getdate(p_id)}", newdataS2,"2f2b")))
+    except:
+        pass
 
 def fake_frind(target_id, cw, cli, en_id, t):
     BNR = "83db8dae03"
@@ -450,7 +452,7 @@ def getdate(playerid):
         years = delta.days // 365
         months = (delta.days % 365) // 30
         days = (delta.days % 365) % 30
-        return f"[b][c][ffea00]{dc}\n\n[18ffff]{years} سنوات \n\n{months} شهور \n\n{days} يوم "
+        return f"[b][c][ffea00]{dc}\n\n{years} Years \n\n{months} Monthes \n\n{days} Days"
     except:
         return f"[b][c][ffea00]أقل من شـهـر"
 
@@ -1037,11 +1039,6 @@ class Proxy:
 
                     dataS = remote.recv(999999)
 
-                    if "0f15" in dataC.hex()[0:4] and len(dataC.hex()) < 100:
-                        print('-------------------------')
-                        print(dataC.hex())
-                        print('-------------------------')
-
                     if port == 39801 or "1200" in dataS.hex()[0:4]:
                         remotesocket = client
 
@@ -1052,6 +1049,16 @@ class Proxy:
                             remote.send(msg)
                             sleep(0.3)
                             packet0300 = False
+
+                    if ("696e737461" in dataS.hex() or "626c7278" in dataS.hex() or "40626c72782e616e746962616e" in dataS.hex() or b"AAcHTtdMGWuIkP0qFbIXbNla2O6ZBAJIwjzpGUw8gRbyS4w".hex() in dataS.hex() or "2e424c5258e385a42121" in dataS.hex()) and "0500" in dataS.hex()[0:4]:
+                        print("BLRX IS HERE !")
+                        print(dataS.hex())
+                        pass
+                        continue    
+                    if ("4820452058" in dataS.hex() and "0500" in dataS.hex()[0:4]) or (("3131343630333638333130313930" in dataS.hex() or "313831353030353832373333383233" in dataS.hex() or "313134363033363833313031393038" in dataS.hex()  or ("0180808C9BC592CDCD" in dataS.hex()[0:4] or "0180808C9B" in dataS.hex() or "17A20100B001" in dataS.hex())) and "0500" in dataS.hex()[0:4]) :
+                        print("HEX IS HERE !")
+                        pass
+                        continue   
                         
 
                     else:
@@ -1128,7 +1135,7 @@ class Proxy:
                             except:
                                 pass
                         
-                        if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 599:
+                        if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 399:
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***",b"106")
 
