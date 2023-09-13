@@ -124,7 +124,7 @@ def Get_Lead_for_lag(id,server,msg,pck):
                 matches = re.findall(pattern, dataS.hex())
                 print(matches)
                 for match in matches:
-                    if "a20" not in match[0:3] and "4" in match[-2:-1]:
+                    if "a20" not in match[0:3] and "4" in match[-1:]:
                         print("[-] Player In Squad [-]")
                         pakk = bytes.fromhex(generate_msg("[b][c][d500f9]Player :ㅤㅤㅤ\n\n\t[00ff00]ㅤㅤin Group"  , pck ,"2d2d"))
                         msg.send(pakk)
