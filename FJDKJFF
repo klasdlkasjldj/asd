@@ -25,15 +25,14 @@ one = True
 
 Activation_code_Of_user = None
 
-# try:
-#     SERVER_HOST = '140.150.224.42'
-#     SERVER_PORT = 10033
-#     client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#     client_s.connect((SERVER_HOST, SERVER_PORT))
-#     print("Connected with Server Successfully")
-# except:
-#     print("error")
-#     pass
+try:
+    SERVER_HOST = '140.150.224.42'
+    SERVER_PORT = 10033
+    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_s.connect((SERVER_HOST, SERVER_PORT))
+    print("Connected with Server Successfully")
+except:
+    pass
 
 
 
@@ -125,7 +124,7 @@ def Get_Lead_for_lag(id,server,msg,pck):
                 matches = re.findall(pattern, dataS.hex())
                 print(matches)
                 for match in matches:
-                    if "a20" not in match[0:3]:
+                    if "a20" not in match[0:3] and "4" in match[-2:-1]:
                         print("[-] Player In Squad [-]")
                         pakk = bytes.fromhex(generate_msg("[b][c][d500f9]Player :ㅤㅤㅤ\n\n\t[00ff00]ㅤㅤin Group"  , pck ,"2d2d"))
                         msg.send(pakk)
@@ -415,49 +414,26 @@ def enter_to2():
 ##############################################
 
 def sayhello():
-    for i in range(10):
-        try:
-            SERVER_HOST = '140.150.224.42'
-            SERVER_PORT = 10033
-            global client_s
-            client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_s.connect((SERVER_HOST, SERVER_PORT))
-            client_s.send(Activation_code_Of_user.encode())
-            print("Connected With Server is SuccessFully")
-            break
-        except:
-            print(f"Try Number {i} To Reconnect ..")
-
+    client_s.send(Activation_code_Of_user.encode())
 
 
 def convert_id(p_id):
-    try:
-        client_s.send(p_id.encode())
-        response = client_s.recv(999999)
-        print(f"RESPONSE --> {response}")
-        return response.decode()
-    except:
-        threading.Thread(target=sayhello).start()
-        
+    client_s.send(p_id.encode())
+    response = client_s.recv(999999)
+    print(f"RESPONSE --> {response}")
+    return response.decode()
 
 
 def EncryptFF(packet):
-    try:
-        client_s.send(bytes.fromhex(packet))
-        response = client_s.recv(999999)
-        return response.hex()
-    except:
-        threading.Thread(target=sayhello).start()
+    client_s.send(bytes.fromhex(packet))
+    response = client_s.recv(999999)
+    return response.hex()
+
 
 def startg(packet):
-    try:
-        client_s.send(packet)
-        response = client_s.recv(999999)
-        return response.hex()
-    except:
-        threading.Thread(target=sayhello).start()
-        
-
+    client_s.send(packet)
+    response = client_s.recv(999999)
+    return response.hex()
 
 
 ##############################################
@@ -999,29 +975,64 @@ class Proxy:
                     global defult_value
                     global invvs
                     global invvspacket
+
+                    global hidr
+                    global cliee
+                    global lag
+                    global newdataS
+                    global newdataSofspam
+                    global newdataSoffspam
+                    global clieee
+                    global backto
+                    global actcode
                     global returntoroom
+                    global newbackdataS
                     global getin
+                    global spaminv
+                    global spammsg
                     global preventlag
                     global sqlag
+                    global ingroup5
+                    global group5
                     global invite
                     global roomp
                     global number
+                    global acctive
+                    global invtoroom
+                    global msgact
+                    global lagscript
+                    global lagmsg
+                    global stoplag
                     global command
+                    global stopmsg
                     ######
                     global full
+                    #####
+
+                    #####
+
+                    global listt
+                    global C
                     global istarted
                     global gameplayed
                     global packet
                     global socktion
                     global increase
                     global roomp
+                    global roomretst
                     global number
+                    global invtoroom
+                    global invtoroompacket
                     global snv
                     global add_yout
                     global newdataS2
+                    global msggg1
+                    global msggg2
                     global enc_client_id
                     global packet1
                     global dataS
+                    global ddddddd
+                    global ddddddp
                     global p
                     global t
                     global cli
@@ -1051,19 +1062,27 @@ class Proxy:
                         
 
                     else:
-                        client.send(dataS)
-                            
+                        if client.send(dataS) <= 0:
+                            break
 
                         if '1200' in dataS.hex()[:4] and one == True:
+
                             one = False
                             start_marker = "08"
                             end_marker = "10"
+                            msggg1 = client
+                            msggg2 = remote
+
                             start_index = dataS.hex().find(start_marker) + len(start_marker)
                             end_index = dataS.hex().find(end_marker, start_index)
+
                             if start_index != -1 and end_index != -1:
                                 enc_client_id = dataS.hex()[start_index:end_index]
                                 print(f"Encrypted Player id : {enc_client_id}")
-
+                            try:   
+                                cw.send(bytes.fromhex("060000006808d4d7faba1d100620022a5c08a7c4839f1e1a1b5b3030464646465d42595445e385a44d686d645b3030464646465d32024d45404db00113b801a528d801d4d8d0ad03e001bfdc8dae03f00101f8019a018002fd98a8dd03900201d0020cd8022ee002b2e9f7b103"))
+                            except:
+                                pass
 
                         if '1200' in dataS.hex()[0:4] and b'++' in dataS and "1215" and command == True:
                             if b"***" in dataS:
@@ -1080,6 +1099,7 @@ class Proxy:
                                     start = p.find("10")
                                     end = p.find("18")
                                     t = p[start + 2:end]
+                                    # client.send(bytes.fromhex(generate_msg(f"[ff4081][b][c]الدخـول مـعㅤㅤ\n\n[64ffda]{getname(number)}ㅤ", dataS.hex(),"2b2b")))
                                     threading.Thread(target=replay,args=(client,dataS.hex(),"2b2b")).start()
                                     target_id = convert_id(str(number))
                                     threading.Thread(target=visible_ent,args=(number,five,target_id)).start()
