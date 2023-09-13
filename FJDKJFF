@@ -73,7 +73,7 @@ def lag_anyone(server,id,pck,msg):
                 try:   
                     server.send(p3)
                     time.sleep(0.010)
-                    pakk = bytes.fromhex(generate_msg(f"[b][c][00bcd4]SEND PACKET --> [{i}]"  , pck ,"2d2d"))
+                    pakk = bytes.fromhex(generate_msg(f"[b][c][00bcd4]SEND LAG --> [{i}]"  , pck ,"2d2d"))
                     msg.send(pakk)
                     print(f"SEND PACKET --> [{i}]")
                 except Exception as q:
