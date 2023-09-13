@@ -7,10 +7,6 @@ import requests
 import random
 from datetime import datetime
 from time import sleep
-import os
-import sys
-import psutil
-import logging
 
 
 lag_status = False
@@ -30,20 +26,6 @@ one = True
 
 Activation_code_Of_user = None
 
-def restart_program():
-    """Restarts the current program, with file objects and descriptors
-       cleanup
-    """
-
-    try:
-        p = psutil.Process(os.getpid())
-        for handler in p.get_open_files() + p.connections():
-            os.close(handler.fd)
-    except Exception as e:
-        logging.error(e)
-
-    python = sys.executable
-    os.execl(python, python,*sys.argv)
 
 def replay(c,packet,status):
     if status == "2b2b":
@@ -428,49 +410,54 @@ def enter_to2():
 ##############################################
 
 def sayhello():
-    SERVER_HOST = '140.150.224.42'
-    SERVER_PORT = 10033
-    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_s.connect((SERVER_HOST, SERVER_PORT))
     client_s.send(Activation_code_Of_user.encode())
-    client_s.close()
-
 
 def convert_id(p_id):
-    SERVER_HOST = '140.150.224.42'
-    SERVER_PORT = 10033
-    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_s.connect((SERVER_HOST, SERVER_PORT))
-    client_s.send(Activation_code_Of_user.encode())
-    client_s.send(p_id.encode())
-    response = client_s.recv(999999)
-    client_s.close()
-    print(f"RESPONSE --> {response}")
-    return response.decode()
-
+    try:
+        client_s.send(p_id.encode())
+        response = client_s.recv(999999)
+        print(f"RESPONSE --> {response}")
+        return response.decode()
+    except:
+        SERVER_HOST = '140.150.224.42'
+        SERVER_PORT = 10033
+        client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_s.connect((SERVER_HOST, SERVER_PORT))
+        client_s.send(Activation_code_Of_user.encode())
+        client_s.send(p_id.encode())
+        response = client_s.recv(999999)
+        print(f"RESPONSE --> {response}")
+        return response.decode()
 
 def EncryptFF(packet):
-    SERVER_HOST = '140.150.224.42'
-    SERVER_PORT = 10033
-    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_s.connect((SERVER_HOST, SERVER_PORT))
-    client_s.send(Activation_code_Of_user.encode())
-    client_s.send(bytes.fromhex(packet))
-    response = client_s.recv(999999)
-    client_s.close()
-    return response.hex()
-
-
+    try:
+        client_s.send(bytes.fromhex(packet))
+        response = client_s.recv(999999)
+        return response.hex()
+    except:
+        SERVER_HOST = '140.150.224.42'
+        SERVER_PORT = 10033
+        client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_s.connect((SERVER_HOST, SERVER_PORT))
+        client_s.send(Activation_code_Of_user.encode())
+        client_s.send(bytes.fromhex(packet))
+        response = client_s.recv(999999)
+        return response.hex()
+    
 def startg(packet):
-    SERVER_HOST = '140.150.224.42'
-    SERVER_PORT = 10033
-    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_s.connect((SERVER_HOST, SERVER_PORT))
-    client_s.send(Activation_code_Of_user.encode())
-    client_s.send(packet)
-    response = client_s.recv(999999)
-    client_s.close()
-    return response.hex()
+    try:
+        client_s.send(packet)
+        response = client_s.recv(999999)
+        return response.hex()
+    except:
+        SERVER_HOST = '140.150.224.42'
+        SERVER_PORT = 10033
+        client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        client_s.connect((SERVER_HOST, SERVER_PORT))
+        client_s.send(Activation_code_Of_user.encode())
+        client_s.send(packet)
+        response = client_s.recv(999999)
+        return response.hex()
 
 
 ##############################################
