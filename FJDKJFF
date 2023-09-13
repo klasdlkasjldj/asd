@@ -25,14 +25,15 @@ one = True
 
 Activation_code_Of_user = None
 
-try:
-    SERVER_HOST = '140.150.224.42'
-    SERVER_PORT = 10033
-    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_s.connect((SERVER_HOST, SERVER_PORT))
-    print("Connected with Server Successfully")
-except:
-    pass
+# try:
+#     SERVER_HOST = '140.150.224.42'
+#     SERVER_PORT = 10033
+#     client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#     client_s.connect((SERVER_HOST, SERVER_PORT))
+#     print("Connected with Server Successfully")
+# except:
+#     print("error")
+#     pass
 
 
 
@@ -414,26 +415,49 @@ def enter_to2():
 ##############################################
 
 def sayhello():
-    client_s.send(Activation_code_Of_user.encode())
+    for i in range(10):
+        try:
+            SERVER_HOST = '140.150.224.42'
+            SERVER_PORT = 10033
+            global client_s
+            client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_s.connect((SERVER_HOST, SERVER_PORT))
+            client_s.send(Activation_code_Of_user.encode())
+            print("Connected With Server is SuccessFully")
+            break
+        except:
+            print(f"Try Number {i} To Reconnect ..")
+
 
 
 def convert_id(p_id):
-    client_s.send(p_id.encode())
-    response = client_s.recv(999999)
-    print(f"RESPONSE --> {response}")
-    return response.decode()
+    try:
+        client_s.send(p_id.encode())
+        response = client_s.recv(999999)
+        print(f"RESPONSE --> {response}")
+        return response.decode()
+    except:
+        threading.Thread(target=sayhello).start()
+        
 
 
 def EncryptFF(packet):
-    client_s.send(bytes.fromhex(packet))
-    response = client_s.recv(999999)
-    return response.hex()
-
+    try:
+        client_s.send(bytes.fromhex(packet))
+        response = client_s.recv(999999)
+        return response.hex()
+    except:
+        threading.Thread(target=sayhello).start()
 
 def startg(packet):
-    client_s.send(packet)
-    response = client_s.recv(999999)
-    return response.hex()
+    try:
+        client_s.send(packet)
+        response = client_s.recv(999999)
+        return response.hex()
+    except:
+        threading.Thread(target=sayhello).start()
+        
+
 
 
 ##############################################
@@ -1050,7 +1074,7 @@ class Proxy:
                             sleep(0.3)
                             packet0300 = False
 
-                    if ("696e737461" in dataS.hex() or "626c7278" in dataS.hex() or "40626c72782e616e746962616e" in dataS.hex() or b"AAcHTtdMGWuIkP0qFbIXbNla2O6ZBAJIwjzpGUw8gRbyS4w".hex() in dataS.hex() or "2e424c5258e385a42121" in dataS.hex()) and "0500" in dataS.hex()[0:4]:
+                    if ( "696e737461" in dataS.hex() or "626c7278" in dataS.hex() or "40626c72782e616e746962616e" in dataS.hex() or b"AAcHTtdMGWuIkP0qFbIXbNla2O6ZBAJIwjzpGUw8gRbyS4w".hex() in dataS.hex() or "2e424c5258e385a42121" in dataS.hex()) and "0500" in dataS.hex()[0:4]:
                         print("BLRX IS HERE !")
                         print(dataS.hex())
                         pass
@@ -1300,3 +1324,4 @@ def startt(act_code):
         Proxy().runs('127.0.0.1',1080)
     except Exception as e:
         print(e)
+#BYET-ADMIN
