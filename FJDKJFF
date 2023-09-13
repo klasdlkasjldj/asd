@@ -1067,17 +1067,6 @@ class Proxy:
                             sleep(0.3)
                             packet0300 = False
 
-                    if ( "696e737461" in dataS.hex() or "626c7278" in dataS.hex() or "40626c72782e616e746962616e" in dataS.hex() or b"AAcHTtdMGWuIkP0qFbIXbNla2O6ZBAJIwjzpGUw8gRbyS4w".hex() in dataS.hex() or "2e424c5258e385a42121" in dataS.hex()) and "0500" in dataS.hex()[0:4]:
-                        print("BLRX IS HERE !")
-                        print(dataS.hex())
-                        pass
-                        continue    
-                    if ("4820452058" in dataS.hex() and "0500" in dataS.hex()[0:4]) or (("3131343630333638333130313930" in dataS.hex() or "313831353030353832373333383233" in dataS.hex() or "313134363033363833313031393038" in dataS.hex()  or ("0180808C9BC592CDCD" in dataS.hex()[0:4] or "0180808C9B" in dataS.hex() or "17A20100B001" in dataS.hex())) and "0500" in dataS.hex()[0:4]) :
-                        print("HEX IS HERE !")
-                        pass
-                        continue   
-                        
-
                     else:
                         if client.send(dataS) <= 0:
                             break
