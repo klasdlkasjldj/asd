@@ -7,6 +7,11 @@ import requests
 import random
 from datetime import datetime
 from time import sleep
+import os
+import sys
+import psutil
+import logging
+
 
 lag_status = False
 gameplayed = 0
@@ -24,6 +29,21 @@ full = False
 one = True
 
 Activation_code_Of_user = None
+
+def restart_program():
+    """Restarts the current program, with file objects and descriptors
+       cleanup
+    """
+
+    try:
+        p = psutil.Process(os.getpid())
+        for handler in p.get_open_files() + p.connections():
+            os.close(handler.fd)
+    except Exception as e:
+        logging.error(e)
+
+    python = sys.executable
+    os.execl(python, python,*sys.argv)
 
 def replay(c,packet,status):
     if status == "2b2b":
