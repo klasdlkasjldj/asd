@@ -55,7 +55,7 @@ cli = None
 p = None
 t = None
 
-command = True
+command = False
 def command_bot(value42w):
     global command
     command = value42w
