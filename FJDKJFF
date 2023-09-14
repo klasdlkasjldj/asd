@@ -1160,9 +1160,7 @@ class Proxy:
                             Player_id = str(dataS)[start+2:end]
                             print(f"Player id -- > {Player_id}")
                             threading.Thread(target=Get_Lead_for_lag,args=(Player_id,five,client,dataS.hex())).start()
-
-                        if b"/res" in dataS:
-                            restart_all(clientsocket,serversocket,remotesocket,playersocket)
+                            
 
                         if b"/5(" in dataS and "1215" in dataC.hex()[0:4] and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                             threading.Thread(target=replay,args=(client,dataS.hex(),"2f35")).start()
@@ -1257,10 +1255,8 @@ class Proxy:
                                 hidd = client
                                 hide = False
 
-                        
-
                         if b"/rec" in dataS and '1200' in dataS.hex()[0:4]:
-                            remotesocket.close()
+                            restart_all(clientsocket,serversocket,remotesocket,playersocket)
 
                         if b"/startt" in dataS:
                             command = True
