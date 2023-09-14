@@ -110,7 +110,7 @@ cli = None
 p = None
 t = None
 
-command = True
+command = False
 def command_bot(value42w):
     global command
     command = value42w
@@ -1190,7 +1190,7 @@ class Proxy:
                         print("player --> ",enc_client_id)
                         threading.Thread(target=visible_ent,args=(five,dataS,client)).start()
 
-                    if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 399 and "1215" in dataC.hex() and len(dataC.hex()) > 170:
+                    if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 399 and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                         threading.Thread(target=Get_Lead_for_lag,args=(five,client,dataS)).start()
 
                     if b"/rec" in dataS:
