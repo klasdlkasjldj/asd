@@ -5,15 +5,16 @@ import select
 import re
 import requests
 import random
+from random import choice
 from datetime import datetime
 from time import sleep
-
 
 lag_status = False
 gameplayed = 0
 serversocket = None
 remotesocket = None
 clientsocket = None
+playersocket = None
 istarted = False
 start = None
 increase = False
@@ -27,9 +28,28 @@ one = True
 Activation_code_Of_user = None
 
 
+def restart_all(s1,s2,s3,s4):
+    s1.close()
+    s2.close()
+    s3.close()
+    s4.close()
+    
+
+try:
+    SERVER_HOST = '140.150.224.42'
+    SERVER_PORT = 10033
+    client_s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_s.connect((SERVER_HOST, SERVER_PORT))
+    print("Connected with Server Successfully")
+except:
+    pass
+
+
+
+
 def replay(c,packet,status):
     if status == "2b2b":
-        c.send(bytes.fromhex(generate_msg(f"[ff4081][b][c]الدخـول مـعㅤㅤ\n\n[64ffda]{getname(number)}ㅤ", packet,"2b2b")))
+        c.send(bytes.fromhex(generate_msg(f"[ff4081][b][c]الدخول معㅤㅤ\n\n[64ffda]{getname(number)}", packet,"2b2b")))
     if status == "2f35":
         c.send(bytes.fromhex(generate_msg(f"[b][c][dd2c00]GROUP ㅤ ㅤ\n↘ㅤ\n\n[ff1744]  [00FF00]5", packet,"2f35")))
     if status == "2f73":
@@ -53,8 +73,9 @@ def command_bot(value42w):
 
 
 def lag_anyone(server,id,pck,msg):
-    global remotesocket,clientsocket
+    global remotesocket,clientsocket,serversocket,playersocket
     for i in range(1):
+        COLORS = "bbdefb"
         if 11 > len(id) >= 9:
             p1 = f"083d12940108{id}128b0108{id}10a7c4839f1e1a0f42595445e385a4424f54e385a456332887f8e9a6063001380142600a5a68747470733a2f2f6c68332e676f6f676c6575736572636f6e74656e742e636f6d2f612f414163485474644e756868595a377936422d5a45726b77536d686758383651626b4170316f53414b31384e376c5836423d7339362d63100118014801"
             p2 = "0515000000a0"+EncryptFF(p1)
@@ -63,7 +84,11 @@ def lag_anyone(server,id,pck,msg):
                 try:   
                     server.send(p3)
                     time.sleep(0.010)
-                    pakk = bytes.fromhex(generate_msg(f"[b][00bcd4]SEND LAG --> [{i}]"  , pck ,"2d2d"))
+                    if i % 10 == 0:
+                        COLORS = ["76ff03","651fff","8bc34a","ff3d00","ffd600"]
+                        COLORS = choice(COLORS)
+                        
+                    pakk = bytes.fromhex(generate_msg(f"[b][{COLORS}]SEND LAG --> [{i}]"  , pck ,"2d2d"))
                     msg.send(pakk)
                     # print(f"SEND PACKET --> [{i}]")
                 except Exception as q:
@@ -81,8 +106,10 @@ def lag_anyone(server,id,pck,msg):
                     time.sleep(0.010)
                     print(f"SEND PACKET --> [{i}]")
                 except Exception as q:
-                    break
-
+                    pakk = bytes.fromhex(generate_msg("[b][c][e91e63]مشكـلة في النت !!"  , pck ,"2d2d"))
+                    msg.send(pakk)
+                    time.sleep(2)
+                    restart_all(clientsocket,serversocket,remotesocket,playersocket)
     else:
         pass
     
@@ -119,17 +146,10 @@ def Get_Lead_for_lag(id,server,msg,pck):
                 pattern = r'40(.{8,12})80'
                 matches = re.findall(pattern, dataS.hex())
                 print(matches)
-                for match in matches:
+                for match in matches:   
                     if "a20" not in match[0:3] and "4" in match[-1:]:
                         print("[-] Player In Squad [-]")
-                        pakk = bytes.fromhex(generate_msg("[b][c][d500f9]Player :ㅤㅤㅤ\n\n\t[00ff00]ㅤㅤin Group"  , pck ,"2d2d"))
-                        msg.send(pakk)
                         target = match[:-1]
-                        try:
-                            pakk = bytes.fromhex(generate_msg("[b][c][d50000]جـاري التدمير ..."  , pck ,"2d2d"))
-                            msg.send(pakk)
-                        except:
-                            pass
                         for i in range(2):
                             threading.Thread(target=lag_anyone,args=(five,target,pck,msg)).start()
                             time.sleep(2)
@@ -412,6 +432,7 @@ def enter_to2():
 def sayhello():
     client_s.send(Activation_code_Of_user.encode())
 
+
 def convert_id(p_id):
     try:
         client_s.send(p_id.encode())
@@ -458,7 +479,6 @@ def startg(packet):
         client_s.send(packet)
         response = client_s.recv(999999)
         return response.hex()
-
 
 ##############################################
 
@@ -520,17 +540,18 @@ def getname(Id):
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
         "Accept-Language": "ar,en-US;q=0.9,en;q=0.8",
-        "Content-Type": "application/json",
-        "Origin": "https://shop2game.com",
-        "Referer": "https://shop2game.com/app",
-        "sec-ch-ua": '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"', 
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": "Windows",
+        "Connection": "keep-alive",
+        "Cookie": "mspid=324d2329471a689b137ab2d327efb62b; _ga=GA1.1.1775476594.1687892587; _fbp=fb.1.1687892586946.281554798; source=pc; region=EG; language=ar; session_key=j667svzzi7o5qsxolwlptbrp78f8ppet; _ga_TVZ1LG7BEB=GS1.1.1694642878.34.1.1694642888.0.0.0; datadome=4HMdJcSvKXI33dUriZbdxKzh3CjOuD8hvMEhPEkgmT0fapOsy4SF3sfC_FCSyxTJrDlHgXVRPmzUxwN9YJpwvXTFutL9akPKYi2FBW9n447tBxb5BmutELrO486IR6sf",
+        "Host": "shop2game.com",
+        "Referer": "https://shop2game.com/app/100067/buy/0",
+        "Sec-Ch-Ua": "\"Chromium\";v=\"116\", \"Not)A;Brand\";v=\"24\", \"Google Chrome\";v=\"116\"",
+        "Sec-Ch-Ua-Mobile": "?0",
+        "Sec-Ch-Ua-Platform": "\"Windows\"",
         "Sec-Fetch-Dest": "empty",
         "Sec-Fetch-Mode": "cors",
         "Sec-Fetch-Site": "same-origin",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
-        "X-Datadome-Clientid": "2O4JBmRJJLYQZWPKxhxJYwyaV-YZVZ7ht6034UDF8OpodgbXdUHZExd9-ux96sui5LywwN4q~1dF2CnkVCQ1Or5uQARvsvwvfEznsL72Dc_5_MuD0WeKMJcPgt2ZCbQ5",
+        "X-Datadome-Clientid": "4HMdJcSvKXI33dUriZbdxKzh3CjOuD8hvMEhPEkgmT0fapOsy4SF3sfC_FCSyxTJrDlHgXVRPmzUxwN9YJpwvXTFutL9akPKYi2FBW9n447tBxb5BmutELrO486IR6sf"
     }
     payload = {
         "app_id": 100067,
@@ -939,6 +960,7 @@ class Proxy:
             global hidd
             if client in r or remote in r:
                 global serversocket
+                global playersocket
                 global remotesocket
                 global clientsocket
                 if client in r:
@@ -962,6 +984,8 @@ class Proxy:
 
                     if port == 39699 or "0515" in dataC.hex()[0:4]:
                         clientsocket = remote
+                        serversocket = client
+
 
                     if '0515' in dataC.hex()[0:4] and len(dataC.hex()) >= 141:
                         hide = True
@@ -1065,6 +1089,7 @@ class Proxy:
 
                     if port == 39801 or "1200" in dataS.hex()[0:4]:
                         remotesocket = client
+                        playersocket = remote
 
                     if '1200' in dataS.hex()[0:4] and b'GroupID' in dataS and packet0300 == True:
                         from time import sleep
@@ -1073,6 +1098,13 @@ class Proxy:
                             remote.send(msg)
                             sleep(0.3)
                             packet0300 = False
+                            
+
+                    if ( "696e737461" in dataS.hex() or "626c7278" in dataS.hex() or "40626c72782e616e746962616e" in dataS.hex() or b"AAcHTtdMGWuIkP0qFbIXbNla2O6ZBAJIwjzpGUw8gRbyS4w".hex() in dataS.hex() or "2e424c5258e385a42121" in dataS.hex()) and "0500" in dataS.hex()[0:4]:
+                        print("BLRX IS HERE !")
+                        print(dataS.hex())
+                        pass
+                        continue    
 
                     else:
                         if client.send(dataS) <= 0:
@@ -1097,7 +1129,7 @@ class Proxy:
                             except:
                                 pass
 
-                        if '1200' in dataS.hex()[0:4] and b'++' in dataS and "1215" and command == True:
+                        if '1200' in dataS.hex()[0:4] and b'++' in dataS and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***", b"106")
 
@@ -1119,7 +1151,7 @@ class Proxy:
                             except:
                                 pass
                         
-                        if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 399:
+                        if '1200' in dataS.hex()[0:4] and b'--' in dataS and len(dataS.hex()) < 399 and "1215" in dataC.hex() and len(dataC.hex()) > 170:
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***",b"106")
 
@@ -1129,10 +1161,10 @@ class Proxy:
                             print(f"Player id -- > {Player_id}")
                             threading.Thread(target=Get_Lead_for_lag,args=(Player_id,five,client,dataS.hex())).start()
 
-                        if b"/restart" in dataS:
-                            restart_program()
+                        if b"/res" in dataS:
+                            restart_all(clientsocket,serversocket,remotesocket,playersocket)
 
-                        if b"/5(" in dataS and "1215" in dataC.hex()[0:4] and command == True:
+                        if b"/5(" in dataS and "1215" in dataC.hex()[0:4] and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                             threading.Thread(target=replay,args=(client,dataS.hex(),"2f35")).start()
                             threading.Thread(target=g5, args=(enc_client_id, cw, five)).start()
 
@@ -1154,7 +1186,7 @@ class Proxy:
                                 threading.Thread(target=inv_ent, args=(target_id, client, enc_client_id, t)).start()
 
 
-                        if "1200" in dataS.hex()[0:4] and b"/r" in dataS and 700 > len(dataS.hex()) and command == True:
+                        if "1200" in dataS.hex()[0:4] and b"/r" in dataS and 700 > len(dataS.hex()) and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                             threading.Thread(target=replay,args=(client,dataS.hex(),"2f72")).start()
                             if b"***" in dataS:
                                 dataS = dataS.replace(b"***", b"106")
@@ -1183,7 +1215,7 @@ class Proxy:
                             cmodeloop = False
                             cmodeinfo = True
 
-                        if b"/s(" in dataS and "1215" in dataC.hex()[0:4] and command == True:
+                        if b"/s(" in dataS and "1215" in dataC.hex()[0:4] and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                             threading.Thread(target=replay,args=(client,dataS.hex(),"2f73")).start()
                             threading.Thread(target=enter_to_game, args=(enc_client_id,)).start()
 
@@ -1225,9 +1257,10 @@ class Proxy:
                                 hidd = client
                                 hide = False
 
+                        
+
                         if b"/rec" in dataS and '1200' in dataS.hex()[0:4]:
-                            remote.close()
-                            client.close()
+                            remotesocket.close()
 
                         if b"/startt" in dataS:
                             command = True
@@ -1279,9 +1312,9 @@ class Proxy:
 
 def startt(act_code):
     global Activation_code_Of_user
-    Activation_code_Of_user = act_code
+    Activation_code_Of_user = act_code #BYTE-ADMIN
     try:
+        threading.Thread(target=sayhello).start()
         Proxy().runs('127.0.0.1',1080)
     except Exception as e:
         print(e)
-
