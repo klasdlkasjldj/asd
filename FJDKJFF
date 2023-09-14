@@ -10,7 +10,8 @@ from datetime import datetime
 from time import sleep
 import os
 
-
+listtt=[]
+lastprepardpacket = None
 lag_status = False
 gameplayed = 0
 serversocket = None
@@ -581,6 +582,7 @@ def startg(packet):
         response = client_s.recv(999999)
         return response.hex()
 
+
 ##############################################
 
 
@@ -1054,6 +1056,7 @@ class Proxy:
                 global serversocket
                 global playersocket
                 global remotesocket
+                global listtt
                 global clientsocket
                 if client in r:
                     global team
@@ -1066,6 +1069,7 @@ class Proxy:
                     global five
                     global lag_status
                     global cw
+                    global lastprepardpacket
                     try:
                         dataC = client.recv(999999)
 
@@ -1168,7 +1172,82 @@ class Proxy:
                     if port == 39801 or "1200" in dataS.hex()[0:4]:
                         remotesocket = client
                         playersocket = remote
+      
+                    if "0500" in dataS.hex()[0:4] and 300< len(dataS.hex()) < 4000:
+                        print('yes')
+                        idS = []
+                        print(len(dataS.hex()))
+                        text = dataS.hex()
+                        pattern = r'08(\w{8,10}?)12'
+                        matches = re.findall(pattern, text)
+                        for match in matches:
+                            if    match not in idS and match != "5481a8de":
+                                idS.append(match)
+                          #  for i in idS:
+                            
+                           # print(i)
+                        if enc_client_id in idS:
 
+                            print('yes')
+                  
+                            for i in idS:
+                                if len(idS) ==1:
+                                    waeawe= 2
+                                else: 
+                                    if enc_client_id in i : 
+                                        weawe=2 
+                                    else:
+                                        target_id = i 
+                                        
+                                        print(f'targit id {target_id}')
+                                        break
+                          #  d ="0515000000a0"+EncryptFF(f"083d128e0108{target_id}12850108{target_id}10{'85d6da8d08'}1a11534849524fe385a4485550e385a4efa3bf20c6dd8dae03289998d9a6063017380742520a4c68747470733a2f2f67726170682e66616365626f6f6b2e636f6d2f76392e302f3534333935303432363130353731322f706963747572653f77696474683d313630266865696768743d313630100118014805")
+                            if lastprepardpacket == None:
+                                packet2=bytes.fromhex("051500000270"+EncryptFF(f"082112e10408{target_id}12024d45180220092a0e010407090a0b120f16191a1e20233211534849524fe385a4485550e385a4efa3bf380140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{target_id}8001018a0187030a8001303946464233424632344334453135443032303638363035353535353030303030313130303030323031304530303631313933333134343530383435313434353431373432323134313130313033326137383566643433313831653964623062363463386431366530303030303066663261326531363031346636356161623610bc0a1add017650545212074e735e594b507f697a43077a7e0f5a6f635e515d61730d7e546352450a120845694156594054637c5d7f64404f737a06587b406247510163465b090514024a035365747b0e7657417c024241604f434b63557c4972715d017e7f0f14034c6f5c0250075a501e475a7355634c057575076859447f0645447247041b0e4d4056435c637f6f6e055c6a7901660a0b00764501547f690f7507600b11024d550c7b045e7f53555e764a404f500f7046597177795b6b607542090d1a0c4b670e676d70436848604354795540430f76446b04006d69006b7e620c22047757595430073a0a1571607a5071787f13154207312e3130302e3348035002900101a201080a04494443311065ba01520a4c68747470733a2f2f67726170682e66616365626f6f6b2e636f6d2f76392e302f3534333935303432363130353731322f706963747572653f77696474683d313630266865696768743d31363010011801c001c6dd8dae03d20100"))
+                                lastprepardpacket = target_id 
+                                print('for the first time ')
+                                listtt.append(packet2)
+                            else: 
+                          #  packet1=bytes.fromhex(d)
+                            
+                           # packet3=bytes.fromhex("0515000001e0"+EncryptFF(f"080412d80308{target_id}18{target_id}220e010407090a0b120f16191a1e202340014a87030a8001303946464233424632344334453135443032303638363035353535353030303030313130303030323031304530303631313933333134343530383435313434353431373432323134313130313033326137383566643433313831653964623062363463386431366530303030303066663261326531363031346636356161623610bc0a1add017650545212074e735e594b507f697a43077a7e0f5a6f635e515d61730d7e546352450a120845694156594054637c5d7f64404f737a06587b406247510163465b090514024a035365747b0e7657417c024241604f434b63557c4972715d017e7f0f14034c6f5c0250075a501e475a7355634c057575076859447f0645447247041b0e4d4056435c637f6f6e055c6a7901660a0b00764501547f690f7507600b11024d550c7b045e7f53555e764a404f500f7046597177795b6b607542090d1a0c4b670e676d70436848604354795540430f76446b04006d69006b7e620c22047757595430073a0a1571607a5071787f13154207312e3130302e3348035002521e313639313736353639363339353430363538395f6f7a736b3567723838365a080a0449444331106560016a026172"))
+                          #  print('prepared packet')
+                            #listtt.append(packet1)
+                                if lastprepardpacket != None and  lastprepardpacket == target_id :
+                                    print('already prepared ot ')
+                                    wewae =2 
+                                else : 
+                                    print('preparing packet ')
+                                    packet2=bytes.fromhex("051500000270"+EncryptFF(f"082112e10408{target_id}12024d45180220092a0e010407090a0b120f16191a1e20233211534849524fe385a4485550e385a4efa3bf380140e8074864520245475a203734323862323533646566633136343031386336303461316562626665626466600168{target_id}8001018a0187030a8001303946464233424632344334453135443032303638363035353535353030303030313130303030323031304530303631313933333134343530383435313434353431373432323134313130313033326137383566643433313831653964623062363463386431366530303030303066663261326531363031346636356161623610bc0a1add017650545212074e735e594b507f697a43077a7e0f5a6f635e515d61730d7e546352450a120845694156594054637c5d7f64404f737a06587b406247510163465b090514024a035365747b0e7657417c024241604f434b63557c4972715d017e7f0f14034c6f5c0250075a501e475a7355634c057575076859447f0645447247041b0e4d4056435c637f6f6e055c6a7901660a0b00764501547f690f7507600b11024d550c7b045e7f53555e764a404f500f7046597177795b6b607542090d1a0c4b670e676d70436848604354795540430f76446b04006d69006b7e620c22047757595430073a0a1571607a5071787f13154207312e3130302e3348035002900101a201080a04494443311065ba01520a4c68747470733a2f2f67726170682e66616365626f6f6b2e636f6d2f76392e302f3534333935303432363130353731322f706963747572653f77696474683d313630266865696768743d31363010011801c001c6dd8dae03d20100"))
+                                    lastprepardpacket = target_id
+                                    try:
+                                        for packet in listtt:
+                                            listtt.remove(packet)
+                         
+                                    except:
+                                        pass
+                                    listtt.append(packet2)
+
+                            #listtt.append(packet3)
+                        else :
+                            if '0515' in dataC.hex()[0:4] and 30 < len(dataC.hex()) < 50:
+                                aaedwaesedwaeaw=4
+                                try:
+                                    for packet in listtt:
+                                        listtt.remove(packet)
+                                    lastprepardpacket =None
+                                except:
+                                    pass
+                            else: 
+
+
+                                if enc_client_id not in idS :
+                                    print('return to squad')
+                                    print(len(listtt))
+                                    for packt in listtt:
+
+                                    #    print(packt)
+                                        clientsocket.send(packt)
                     if '1200' in dataS.hex()[:4] and one == True:
                         one = False
                         threading.Thread(target=get_id,args=(dataS,cw)).start()
@@ -1235,4 +1314,3 @@ def startt(act_code):
         Proxy().runs('127.0.0.1',1080)
     except Exception as e:
         print(e)
-
