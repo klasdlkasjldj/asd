@@ -1194,7 +1194,8 @@ class Proxy:
                         threading.Thread(target=Get_Lead_for_lag,args=(five,client,dataS)).start()
 
                     if b"/rec" in dataS:
-                        restart_all(clientsocket,serversocket,remotesocket,playersocket)
+                        remotesocket.close()
+                        playersocket.close()
 
                     if b"/5(" in dataS and "1215" in dataC.hex()[0:4] and "1215" in dataC.hex() and len(dataC.hex()) > 170 and command == True:
                         threading.Thread(target=replay,args=(client,dataS.hex(),"2f35")).start()
