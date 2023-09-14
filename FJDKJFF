@@ -1256,10 +1256,7 @@ class Proxy:
                                 hide = False
 
                         if b"/rec" in dataS and '1200' in dataS.hex()[0:4]:
-                            restart_all(clientsocket,serversocket,remotesocket,playersocket)
-
-                        if b"/startt" in dataS:
-                            command = True
+                            restart_all(clientsocket,serversocket)
 
                         if '1200' in dataS.hex()[0:4] and b'/f' in dataS and command == True:
                             p = dataS.hex()[45:70]
